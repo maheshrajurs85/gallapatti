@@ -1,137 +1,71 @@
 {% load static %}
 <!doctype html>
 <html lang="en">
-  <head>
-  	<title>Table 09</title>
+<head>
+    <title>Goods</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="{% static 'css/nofileextnc.css' %}" rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="{% static 'css/font-awesome.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
 
-	<link href='https://fonts.googleapis.com/css?family=Roboto:400,100,300,700' rel='stylesheet' type='text/css'>
+<body>
+    <section class="ftco-section">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-6 text-center mb-5">
+                    <h2 class="heading-section">Goods, Qualities and Price</h2>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="table-wrap">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th><b>Goods Name</b></th>
+                                    <th><b>1st Quality Price</b></th>
+                                    <th><b>2nd Quality Price</b></th>
+                                    <th><b>Ripped Quality Price</b></th>
+                                    <!-- <th>Status</th> -->
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for good in goodslist %}
+                                <tr id="row_{{ good.id }}">
+                                    <td id="cell_{{ good.id }}_GoodsName" contenteditable="true" onblur="updateCell('{{ good.id }}', 'GoodsName', this.innerText)">{{good.GoodsName}}</td>
+                                    <td id="cell_{{ good.id }}_FirstQualityPrice" contenteditable="true" onblur="updateCell('{{ good.id }}', 'FirstQualityPrice', this.innerText)">{{good.FirstQualityPrice}}</td>
+                                    <td id="cell_{{ good.id }}_SecondQualityPrice" contenteditable="true" onblur="updateCell('{{ good.id }}', 'SecondQualityPrice', this.innerText)">{{ good.SecondQualityPrice}}</td>
+                                    <td id="cell_{{ good.id }}_RippedQualityPrice" contenteditable="true" onblur="updateCell('{{ good.id }}', 'RippedQualityPrice', this.innerText)">{{good.RippedQualityPrice}}</td>
+                                </tr>
+                                {% endfor %}
 
-	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-	
-	<link rel="stylesheet" href="{% static 'css/style.css' %}">
+                                <tr>
+                                    <form id="newGoodsForm" method="post" action="{% url 'save_row' %}" onsubmit="return validateForm()">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="row_id" value="NEW_ID">
+                                    <td><input type="text" name="GoodsName" placeholder="Goods Name" required></td>
+                                    <td><input type="number" name="FirstQualityPrice" placeholder="FirstQualityPrice" required></td>
+                                    <td><input type="number" name="SecondQualityPrice" placeholder="SecondQualityPrice" required></td>
+                                    <td><input type="number" name="RippedQualityPrice" placeholder="RippedQualityPrice" required></td>
+                                    <td><button type="submit" class="btn btn-info">Save</button></td>
+                                    </form>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-	</head>
-	<body>
-	<section class="ftco-section">
-		<div class="container">
-			<div class="row justify-content-center">
-				<div class="col-md-6 text-center mb-5">
-					<h2 class="heading-section">Table #09</h2>
-				</div>
-			</div>
-			<div class="row">
-				<div class="col-md-12">
-					<div class="table-wrap">
-						<table class="table table-striped">
-							<thead>
-								<tr>
-									<th>Invoce</th>
-									<th>Customer</th>
-									<th>Ship</th>
-									<th>Price</th>
-									<th>Pruchased Price</th>
-									<th>Status</th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr>
-									<th scope="row">1007</th>
-									<td contenteditable="true">Mark Otto</td>
-									<td>Japan</td>
-									<td>$3000</td>
-									<td>$1200</td>
-									<td><a href="#" class="btn btn-success">Progress</a></td>
-								</tr>
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+    <script src="{% static 'js/popper.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/main.js' %}"></script>
+    <script src="{% static 'js/editTableCells.js' %}"></script>
 
-								<tr>
-									<th scope="row">1006</th>
-									<td>Mark Otto</td>
-									<td>Japan</td>
-									<td>$3000</td>
-									<td>$1200</td>
-									<td><a href="#" class="btn btn-warning">Open</a></td>
-								</tr>
-
-								<tr>
-									<th scope="row">1005</th>
-									<td>Mark Otto</td>
-									<td>Japan</td>
-									<td>$3000</td>
-									<td>$1200</td>
-									<td><a href="#" class="btn btn-danger">On hold</a></td>
-								</tr>
-
-								<tr>
-									<th scope="row">1004</th>
-									<td>Mark Otto</td>
-									<td>Japan</td>
-									<td>$3000</td>
-									<td>$1200</td>
-									<td><a href="#" class="btn btn-success">Progress</a></td>
-								</tr>
-
-								<tr>
-									<th scope="row">1003</th>
-									<td>Mark Otto</td>
-									<td>Japan</td>
-									<td>$3000</td>
-									<td>$1200</td>
-									<td><a href="#" class="btn btn-danger">On hold</a></td>
-								</tr>
-
-								<tr>
-									<th scope="row">1001</th>
-									<td>Mark Otto</td>
-									<td>Japan</td>
-									<td>$3000</td>
-									<td>$1200</td>
-									<td><a href="#" class="btn btn-warning">Open</a></td>
-
-								<tr>
-									<th scope="row">1001</th>
-									<td>Mark Otto</td>
-									<td>Japan</td>
-									<td>$3000</td>
-									<td>$1200</td>
-									<td><a href="#" class="btn btn-warning">Open</a></td>
-								</tr>
-
-								<tr>
-									<th scope="row">1001</th>
-									<td>Mark Otto</td>
-									<td>Japan</td>
-									<td>$3000</td>
-									<td>$1200</td>
-									<td><a href="#" class="btn btn-success">Progress</a></td>
-								</tr>
-								+++++++++++++++
-								<tr class="hide">
-									<td contenteditable="true"></td>
-									<td contenteditable="true"></td>
-									<td>
-										<span class="table-remove glyphicon glyphicon-remove"></span>
-									</td>
-									<td>
-										<span class="table-up glyphicon glyphicon-arrow-up"></span>
-										<span class="table-down glyphicon glyphicon-arrow-down"></span>
-									</td>
-								</tr>
-					++++++++
-					</tbody>
-					</table>
-				</div>
-				</div>
-			</div>
-		</div>
-	</section>
-
-	<script src="{% static 'js/jquery.min.js' %}"></script>
-  <script src="{% static 'js/popper.js' %}"></script>
-  <script src="{% static 'js/bootstrap.min.js' %}"></script>
-  <script src="{% static 'js/main.js' %}"></script>
-		<h1>helloooooo {{name}}!!!!!</h1>
-	</body>
+</body>
 </html>
 

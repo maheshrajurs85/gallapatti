@@ -19,5 +19,7 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('', views.index, name='home')
+    path('', views.index, name='home'),
+    path('save_row/', views.save_row, name='save_row'),
+    path('update_cell/', views.update_cell, name='update_cell'),
 ]

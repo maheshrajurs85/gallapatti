@@ -1,0 +1,22 @@
+python --version
+python3 --version
+pip install Django
+
+python -m django --version
+django-admin --version
+mkdir SaptaKoti
+cd SaptaKoti
+django-admin startproject gallapatti
+cd gallapatti
+python manage.py runserver
+http://127.0.0.1:8000/
+
+python manage.py startapp MainApp
+
+python manage.py collectstatic
+
+pip install psycopg2
+
+python manage.py makemigrations
+python manage.py sqlmigrate MainApp 0001
+python manage.py migrate

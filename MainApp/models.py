@@ -7,8 +7,11 @@ from django_admin_row_actions import AdminRowActionsMixin
 
 class goods(models.Model):
     GoodsName = models.CharField(max_length=50)
-    GoodsQuality = models.CharField(max_length=10)
-    GoodsPrice = models.IntegerField(default=0, blank=True, null=True, editable=True)
+    FirstQualityPrice = models.IntegerField(default=0, blank=True, null=True)
+    SecondQualityPrice = models.IntegerField(default=0, blank=True, null=True)
+    RippedQualityPrice = models.IntegerField(default=0, blank=True, null=True)
+    class Meta:
+        ordering = ['GoodsName'] #oder/sort by ID
 
 class Suppliers(models.Model):
     SupplierName = models.CharField(max_length=30)
