@@ -42,7 +42,7 @@
                                 {% endfor %}
 
                                 <tr>
-                                    <form id="newGoodsForm" method="post" action="{% url 'save_row' %}" onsubmit="return validateForm()">
+                                    <form id="newGoodsForm" method="post" action="{% url 'goods_add_row' %}" onsubmit="return validateForm()">
                                         {% csrf_token %}
                                         <input type="hidden" name="row_id" value="NEW_ID">
                                     <td><input type="text" name="GoodsName" placeholder="Goods Name" required></td>

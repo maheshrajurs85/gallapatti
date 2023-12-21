@@ -18,7 +18,7 @@ function validateForm() {//
 
 // pending - we  have to give user an information about the update
 // if used tab - issue
-function updateCell(rowId, field, value) {
+function updateCell(rowId, field, value, tableName) {
             $.ajax({
                 url: '/update_cell/',  // Replace with your Django view URL
                 method: 'POST',
@@ -26,11 +26,13 @@ function updateCell(rowId, field, value) {
                     'row_id': rowId,
                     'field': field,
                     'value': value,
+                    'tableName': tableName,
                     'csrfmiddlewaretoken': '{{ csrf_token }}'
                 },
                 success: function (data) {
                     console.log(field + ' Value Updated: ' + value);
-                    //window.alert(field + ' Value Updated to : ' + value); //issue if used tab
+                    //window.alert('cell_' + rowId + '_' + field); //issue if used tab
+                    // Below code is to hightlight the modified cell
                     var cellId = 'cell_' + rowId + '_' + field;
                     var modifiedCell = document.getElementById(cellId);
                     if (modifiedCell) {

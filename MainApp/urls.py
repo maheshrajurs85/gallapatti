@@ -16,10 +16,22 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from MainApp.models import Suppliers
 from . import views
 
 urlpatterns = [
-    path('', views.index, name='home'),
-    path('save_row/', views.save_row, name='save_row'),
-    path('update_cell/', views.update_cell, name='update_cell'),
+    path('goods/', views.GoodsView, name='GoodsView'),
+    path('goods_add_row/', views.goods_add_row, name='goods_add_row'),
+    
+    path('update_cell/', views.update_cell, name='goods_update_cell'),
+    
+    path('suppliers/', views.SuppliersView, name='SuppliersView'),
+    path('suppliers_add_row/', views.Suppliers_add_row, name='suppliers_add_row'),
+    
+    path('buyers/', views.BuyersView, name='BuyersView'),
+    path('buyers_add_row/', views.Buyers_add_row, name='Buyers_add_row'),
+    
+    path('mandiExpenses/', views.MandiExpensesView, name='MandiExpenses'),
+    path('expenses_add_row/', views.MandiExpenses_add_row, name='MandiExpenses_add_row'),
+    
 ]

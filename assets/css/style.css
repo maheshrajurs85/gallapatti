@@ -8224,11 +8224,6 @@ h1, h2, h3, h4, h5,
     margin-top: 110px; /* Add spacing above the button */
 }
 
-.modified-cell {
-    background-color: yellow; /* You can customize the highlighting style */
-    transition: background-color 0.5s ease; /* Smooth transition effect */
-}
-
 .updated-cell {
     background-color: lightgreen; /* Change to your desired highlight color */
     transition: background-color 0.5s ease; /* Smooth transition effect */

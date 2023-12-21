@@ -1,0 +1,67 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Buyers</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="{% static 'css/nofileextnc.css' %}" rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="{% static 'css/font-awesome.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+
+<body>
+    <section class="ftco-section">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-6 text-center mb-5">
+                    <h2 class="heading-section">Buyers Details</h2>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="table-wrap">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th><b>Buyers Name</b></th>
+                                    <th><b>Mobile Number</b></th>
+                                    <th><b>Address</b></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for buyer in buyerslist %}
+                                <tr id="row_{{ buyer.id }}">
+                                    <td id="cell_{{ buyer.id }}_BuyerName" contenteditable="true" onblur="updateCell('{{ buyer.id }}', 'BuyerName', this.innerText, 'Buyers')">{{buyer.BuyerName}}</td>
+                                    <td id="cell_{{ buyer.id }}_MobileNumber" contenteditable="true" onblur="updateCell('{{ buyer.id }}', 'MobileNumber', this.innerText, 'Buyers')">{{buyer.MobileNumber}}</td>
+                                    <td id="cell_{{ buyer.id }}_FromAddress" contenteditable="true" onblur="updateCell('{{ buyer.id }}', 'FromAddress', this.innerText, 'Buyers')">{{ buyer.FromAddress}}</td>
+                                </tr>
+                                {% endfor %}
+
+                                <tr>
+                                    <form id="newBuyerForm" method="post" action="{% url 'Buyers_add_row' %}" onsubmit="return validateForm()">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="row_id" value="NEW_ID">
+                                    <td><input type="text" name="BuyerName" placeholder="Buyer Name" required></td>
+                                    <td><input type="text" name="MobileNumber" placeholder="Mobile Number" required></td>
+                                    <td><input type="text" name="FromAddress" placeholder="Address" required></td>
+                                    <td><button type="submit" class="btn btn-info">Save</button></td>
+                                    </form>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+    <script src="{% static 'js/popper.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/main.js' %}"></script>
+    <script src="{% static 'js/editTableCells.js' %}"></script>
+
+</body>
+</html>
+

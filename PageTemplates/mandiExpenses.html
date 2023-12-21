@@ -1,0 +1,79 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Expenses</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="{% static 'css/nofileextnc.css' %}" rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="{% static 'css/font-awesome.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+
+<body>
+    <section class="ftco-section">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-6 text-center mb-5">
+                    <h2 class="heading-section">Mandi Expense Details</h2>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="table-wrap">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Vehicle Rent</th>
+                                    <th>Association Fund</th>
+                                    <th>Coolie</th>
+                                    <th>Charity</th>
+                                    <th>Wastage in KG</th>
+                                    <th>Mandi Service Charge (%)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if expenseslist %}
+                                {% for expense in expenseslist %}
+                                <tr id="row_{{ expense.id }}">
+                                    <td id="cell_{{ expense.id }}_VehicleRent" contenteditable="true" onblur="updateCell('{{ expense.id }}', 'VehicleRent', this.innerText, 'MandiExpenses')">{{ expense.VehicleRent }}</td>
+                                    <td id="cell_{{ expense.id }}_AssociationFund" contenteditable="true" onblur="updateCell('{{ expense.id }}', 'AssociationFund', this.innerText, 'MandiExpenses')">{{ expense.AssociationFund }}</td>
+                                    <td id="cell_{{ expense.id }}_Coolie" contenteditable="true" onblur="updateCell('{{ expense.id }}', 'Coolie', this.innerText, 'MandiExpenses')">{{ expense.Coolie }}</td>
+                                    <td id="cell_{{ expense.id }}_Charity" contenteditable="true" onblur="updateCell('{{ expense.id }}', 'Charity', this.innerText, 'MandiExpenses')">{{ expense.Charity }}</td>
+                                    <td id="cell_{{ expense.id }}_Wastage" contenteditable="true" onblur="updateCell('{{ expense.id }}', 'WastageInKG', this.innerText, 'MandiExpenses')">{{ expense.WastageInKG }}</td>
+                                    <td id="cell_{{ expense.id }}_MandiServiceCharge" contenteditable="true" onblur="updateCell('{{ expense.id }}', 'MandiServiceChargeinPercentage', this.innerText, 'MandiExpenses')">{{ expense.MandiServiceChargeinPercentage }}</td>
+                                </tr>
+                                {% endfor %}
+                                {% else %}
+                                <tr>
+                                    <form id="newExpenseForm" method="post" action="{% url 'MandiExpenses_add_row' %}" onsubmit="return validateForm()">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="row_id" value="NEW_ID">
+                                    <td><input type="text" name="VehicleRent" placeholder="Vehicle Rent" required></td>
+                                    <td><input type="text" name="AssociationFund" placeholder="Association Fund" required></td>
+                                    <td><input type="text" name="Coolie" placeholder="Coolie" required></td>
+                                    <td><input type="text" name="Charity" placeholder="Charity" required></td>
+                                    <td><input type="text" name="WastageInKG" placeholder="Wastage (in KG)" required></td>
+                                    <td><input type="text" name="MandiServiceChargeinPercentage" placeholder="Mandi Service Charge (%)" required></td>
+                                    <!-- Add more input fields as needed -->
+                                    <td><button type="submit" class="btn btn-info">Save</button></td>
+                                    </form>
+                                </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+    <script src="{% static 'js/popper.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/main.js' %}"></script>
+    <script src="{% static 'js/editTableCells.js' %}"></script>
+
+</body>
+</html>
+

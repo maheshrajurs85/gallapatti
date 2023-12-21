@@ -55,10 +55,13 @@ class ExportedGoods(models.Model):
     Comment = models.TextField(default='', blank=True, null=True, help_text='Enter your comment here...')
     
 class MandiExpenses(models.Model):
-    Coolie = models.IntegerField(default=0, blank=True, null=True)
-    Charity = models.IntegerField(default=0, blank=True, null=True)
-    Wastage = models.IntegerField(default=0, blank=True, null=True)
-    MandiServiceCharge = models.IntegerField(default=0, blank=True, null=True)
+    
+    VehicleRent = models.IntegerField(default=10, blank=True, null=True)
+    AssociationFund = models.IntegerField(default=50, blank=True, null=True)
+    Coolie = models.IntegerField(default=10, blank=True, null=True)
+    Charity = models.IntegerField(default=100, blank=True, null=True)
+    WastageInKG = models.IntegerField(default=4, blank=True, null=True)
+    MandiServiceChargeinPercentage = models.IntegerField(default=10, blank=True, null=True)
     
 class  BalanceSheet(models.Model):
     ThatDay = models.DateField(auto_now_add=True, null=True)
