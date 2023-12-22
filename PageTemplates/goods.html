@@ -34,10 +34,10 @@
                             <tbody>
                                 {% for good in goodslist %}
                                 <tr id="row_{{ good.id }}">
-                                    <td id="cell_{{ good.id }}_GoodsName" contenteditable="true" onblur="updateCell('{{ good.id }}', 'GoodsName', this.innerText)">{{good.GoodsName}}</td>
-                                    <td id="cell_{{ good.id }}_FirstQualityPrice" contenteditable="true" onblur="updateCell('{{ good.id }}', 'FirstQualityPrice', this.innerText)">{{good.FirstQualityPrice}}</td>
-                                    <td id="cell_{{ good.id }}_SecondQualityPrice" contenteditable="true" onblur="updateCell('{{ good.id }}', 'SecondQualityPrice', this.innerText)">{{ good.SecondQualityPrice}}</td>
-                                    <td id="cell_{{ good.id }}_RippedQualityPrice" contenteditable="true" onblur="updateCell('{{ good.id }}', 'RippedQualityPrice', this.innerText)">{{good.RippedQualityPrice}}</td>
+                                    <td id="cell_{{ good.id }}_GoodsName" contenteditable="true" onblur="updateCell('{{ good.id }}', 'GoodsName', this.innerText, 'Goods')">{{good.GoodsName}}</td>
+                                    <td id="cell_{{ good.id }}_FirstQualityPrice" contenteditable="true" onblur="updateCell('{{ good.id }}', 'FirstQualityPrice', this.innerText, 'Goods')">{{good.FirstQualityPrice}}</td>
+                                    <td id="cell_{{ good.id }}_SecondQualityPrice" contenteditable="true" onblur="updateCell('{{ good.id }}', 'SecondQualityPrice', this.innerText, 'Goods')">{{ good.SecondQualityPrice}}</td>
+                                    <td id="cell_{{ good.id }}_RippedQualityPrice" contenteditable="true" onblur="updateCell('{{ good.id }}', 'RippedQualityPrice', this.innerText, 'Goods')">{{good.RippedQualityPrice}}</td>
                                 </tr>
                                 {% endfor %}
 
