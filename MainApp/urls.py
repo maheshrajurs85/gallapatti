@@ -18,6 +18,7 @@ from django.contrib import admin
 from django.urls import path
 from MainApp.models import Suppliers
 from . import views
+from .views import get_supplier_suggestions
 
 urlpatterns = [
     path('goods/', views.GoodsView, name='GoodsView'),
@@ -34,4 +35,7 @@ urlpatterns = [
     path('mandiExpenses/', views.MandiExpensesView, name='MandiExpenses'),
     path('expenses_add_row/', views.MandiExpenses_add_row, name='MandiExpenses_add_row'),
     
+    path('importedgoods/', views.ImportedGoodsView, name='ImportedGoodsView'),
+    path('importedgoods_add_row/', views.ImportedGoods_add_row, name='ImportedGoods_add_row'),
+    path('get_supplier_suggestions/', get_supplier_suggestions, name='get_supplier_suggestions'),
 ]

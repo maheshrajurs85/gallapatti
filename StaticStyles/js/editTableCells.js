@@ -1,24 +1,29 @@
-function validateForm() {//
-            var form = document.getElementById('newGoodsForm');
-            var inputs = form.getElementsByTagName('input');
+// if you modify any thing Please run command - "python manage.py collectstatic"
 
-            for (var i = 0; i < inputs.length; i++) {
-                var input = inputs[i];
+function validateForm(formId) {
+    console.log('inside validate form 123');
+    var form = document.getElementById(formId);
+    var formElements = form.elements;
 
-                // Check if the input is required and its value is empty
-                if (input.hasAttribute('required') && input.value.trim() === '') {
-                    alert('Please fill in all fields.');
-                    return false; // Prevent form submission
-                }
-            }
+    for (var i = 0; i < formElements.length; i++) {
+        var element = formElements[i];
 
-            // Continue with form submission if all required fields are filled
-            return true;
+        // Check if the element is required and its value is empty
+        if (element.hasAttribute('required') && element.value.trim() === '') {
+            alert('Please fill Field :', element.name);
+            return false; // Prevent form submission
+        }
+    }
+
+    // Continue with form submission if all required fields are filled
+    return true;
 }
+
 
 // pending - we  have to give user an information about the update
 // if used tab - issue
 function updateCell(rowId, field, value, tableName) {
+            console.log("inside updateCell form 123");
             $.ajax({
                 url: '/update_cell/',  // Replace with your Django view URL
                 method: 'POST',
@@ -30,7 +35,7 @@ function updateCell(rowId, field, value, tableName) {
                     'csrfmiddlewaretoken': '{{ csrf_token }}'
                 },
                 success: function (data) {
-                    console.log(field + ' Value Updated: ' + value);
+                    console.log(field + ' Value Updated123: ' + value);
                     //window.alert('cell_' + rowId + '_' + field); //issue if used tab
                     // Below code is to hightlight the modified cell
                     var cellId = 'cell_' + rowId + '_' + field;

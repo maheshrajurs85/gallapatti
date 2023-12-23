@@ -42,9 +42,9 @@
                                 {% endfor %}
 
                                 <tr>
-                                    <form id="newGoodsForm" method="post" action="{% url 'goods_add_row' %}" onsubmit="return validateForm()">
-                                        {% csrf_token %}
-                                        <input type="hidden" name="row_id" value="NEW_ID">
+                                    <form id="newGoodsForm" method="post" action="{% url 'goods_add_row' %}" onsubmit="return validateForm(this)">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="row_id" value="NEW_ID">
                                     <td><input type="text" name="GoodsName" placeholder="Goods Name" required></td>
                                     <td><input type="number" name="FirstQualityPrice" placeholder="FirstQualityPrice" required></td>
                                     <td><input type="number" name="SecondQualityPrice" placeholder="SecondQualityPrice" required></td>

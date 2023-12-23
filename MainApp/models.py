@@ -11,17 +11,21 @@ class goods(models.Model):
     SecondQualityPrice = models.IntegerField(default=0, blank=True, null=True)
     RippedQualityPrice = models.IntegerField(default=0, blank=True, null=True)
     class Meta:
-        ordering = ['GoodsName'] #oder/sort by ID
+        ordering = ['GoodsName'] #oder/sort by 
 
 class Suppliers(models.Model):
     SupplierName = models.CharField(max_length=30)
     MobileNumber = models.CharField(max_length=15)
     FromAddress = models.CharField(max_length=100)
+    class Meta:
+        ordering = ['SupplierName'] #oder/sort by 
     
 class Buyers(models.Model):
     BuyerName = models.CharField(max_length=30)
     MobileNumber = models.CharField(max_length=15)
     FromAddress = models.CharField(max_length=100)
+    class Meta:
+        ordering = ['BuyerName'] #oder/sort by
     
 class ImportedGoods(models.Model):
     SupplierID = models.ForeignKey(Suppliers, on_delete=models.DO_NOTHING)

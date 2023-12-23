@@ -1,0 +1,170 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>InStock</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="{% static 'css/nofileextnc.css' %}" rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="{% static 'css/font-awesome.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="{% static 'js/editTableCells.js' %}"></script>
+</head>
+
+<body>
+
+    <section class="ftco-section">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-6 text-center mb-5">
+                    <h2 class="heading-section">Instock goods details</h2>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="table-wrap">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th><b>Supplier ID</b></th>
+                                    <th><b>Import Date</b></th>
+                                    <th><b>Goods ID</b></th>
+                                    <th><b>Creats Count</b></th>
+                                    <th><b>In KGs</b></th>
+                                    <th><b>Goods Price</b></th>
+                                    <th><b>Total Amount</b></th>
+                                    <th><b>Mandi Expenses</b></th>
+                                    <th><b>To be Paid to Supplier</b></th>
+                                    <th><b>Balance to be Paid</b></th>
+                                    <th><b>Sold Status</b></th>
+                                    <th><b>Billing Status</b></th>
+                                    <th><b>Date Paid</b></th>
+                                    <th><b>Comment</b></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for imported_goods in imported_goods_list %}
+                                <tr id="row_{{ imported_goods.id }}">
+                                    <td id="cell_{{ imported_goods.id }}_SupplierID" contenteditable="true" onblur="updateCell('{{ imported_goods.id }}', 'SupplierID', this.innerText, 'ImportedGoods')">{{ imported_goods.SupplierID }}</td>
+                                    <td id="cell_{{ imported_goods.id }}_ImportDate" contenteditable="true" onblur="updateCell('{{ imported_goods.id }}', 'ImportDate', this.innerText, 'ImportedGoods')">{{ imported_goods.ImportDate }}</td>
+                                    <td id="cell_{{ imported_goods.id }}_GoodsID" contenteditable="true" onblur="updateCell('{{ imported_goods.id }}', 'GoodsID', this.innerText, 'ImportedGoods')">{{ imported_goods.GoodsID }}</td>
+                                    <td id="cell_{{ imported_goods.id }}_CreatsCount" contenteditable="true" onblur="updateCell('{{ imported_goods.id }}', 'CreatsCount', this.innerText, 'ImportedGoods')">{{ imported_goods.CreatsCount }}</td>
+                                    <td id="cell_{{ imported_goods.id }}_InKGs" contenteditable="true" onblur="updateCell('{{ imported_goods.id }}', 'InKGs', this.innerText, 'ImportedGoods')">{{ imported_goods.InKGs }}</td>
+                                    <td id="cell_{{ imported_goods.id }}_GoodsPrice" contenteditable="true" onblur="updateCell('{{ imported_goods.id }}', 'GoodsPrice', this.innerText, 'ImportedGoods')">{{ imported_goods.GoodsPrice }}</td>
+                                    <td id="cell_{{ imported_goods.id }}_TotalAmount" contenteditable="true" onblur="updateCell('{{ imported_goods.id }}', 'TotalAmount', this.innerText, 'ImportedGoods')">{{ imported_goods.TotalAmount }}</td>
+                                    <td id="cell_{{ imported_goods.id }}_MandiExpenses" contenteditable="true" onblur="updateCell('{{ imported_goods.id }}', 'MandiExpenses', this.innerText, 'ImportedGoods')">{{ imported_goods.MandiExpenses }}</td>
+                                    <td id="cell_{{ imported_goods.id }}_TobePaidToSupplier" contenteditable="true" onblur="updateCell('{{ imported_goods.id }}', 'TobePaidToSupplier', this.innerText, 'ImportedGoods')">{{ imported_goods.TobePaidToSupplier }}</td>
+                                    <td id="cell_{{ imported_goods.id }}_BalanceToBePaid" contenteditable="true" onblur="updateCell('{{ imported_goods.id }}', 'BalanceToBePaid', this.innerText, 'ImportedGoods')">{{ imported_goods.BalanceToBePaid }}</td>
+                                    <td id="cell_{{ imported_goods.id }}_SoldStatus" contenteditable="true" onblur="updateCell('{{ imported_goods.id }}', 'SoldStatus', this.innerText, 'ImportedGoods')">{{ imported_goods.SoldStatus }}</td>
+                                    <td id="cell_{{ imported_goods.id }}_BillingStatus" contenteditable="true" onblur="updateCell('{{ imported_goods.id }}', 'BillingStatus', this.innerText, 'ImportedGoods')">{{ imported_goods.BillingStatus }}</td>
+                                    <td id="cell_{{ imported_goods.id }}_DatePaid" contenteditable="true" onblur="updateCell('{{ imported_goods.id }}', 'DatePaid', this.innerText, 'ImportedGoods')">{{ imported_goods.DatePaid }}</td>
+                                    <td id="cell_{{ imported_goods.id }}_Comment" contenteditable="true" onblur="updateCell('{{ imported_goods.id }}', 'Comment', this.innerText, 'ImportedGoods')">{{ imported_goods.Comment }}</td>
+                                </tr>
+                                {% endfor %}
+                                <tr>
+                                    <form id="newImportedGoodsForm" method="post" action="{% url 'ImportedGoods_add_row' %}" onsubmit="return validateForm('newImportedGoodsForm')">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="row_id" value="NEW_ID">
+                                        <td style="position: relative;">
+                                        <input type="text" name="SupplierID" id="supplierInput" placeholder="Supplier Name/MobNum" required list="supplierSuggestions">
+                                        <input type="text" name="hiddenSupplierId" id="hiddenSupplierId" placeholder="Do not Type Here" required>
+                                        <datalist id="supplierSuggestions" style="max-height: 150px; overflow-y: auto;"></datalist>
+                                        </td>
+
+                                        <td><input type="datetime-local" name="ImportDate" value="{% now 'Y-m-d H:i' %}" ></td>
+                                        <td><input type="text" name="GoodsID" placeholder="Goods ID" required></td>
+                                        <td><input type="text" name="CreatsCount" placeholder="Creats Count" required></td>
+                                        <td><input type="text" name="InKGs" placeholder="In KGs" required></td>
+                                        <td><input type="text" name="GoodsPrice" placeholder="Goods Price" required></td>
+                                        <td><input type="text" name="TotalAmount" placeholder="Total Amount" required></td>
+                                        <td><input type="text" name="MandiExpenses" placeholder="Mandi Expenses" required></td>
+                                        <td><input type="text" name="TobePaidToSupplier" placeholder="To be Paid to Supplier" required></td>
+                                        <td><input type="text" name="BalanceToBePaid" placeholder="Balance to be Paid" required></td>
+                                        <td><input type="text" name="SoldStatus" placeholder="Sold Status" required></td>
+                                        <td><input type="text" name="BillingStatus" placeholder="Billing Status" required></td>
+                                        <td><input type="text" name="DatePaid" placeholder="Date Paid" required></td>
+                                        <td><input type="text" name="Comment" placeholder="Comment" required></td>
+                                        <td><button type="submit" class="btn btn-info">Save</button></td>
+                                    </form>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+    <script src="{% static 'js/popper.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/main.js' %}"></script>
+    <script src="{% static 'js/editTableCells.js' %}"></script>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+    <script>
+        // Reusable function to handle autocomplete for any input field
+        function setupAutocomplete(inputId, datalistId, hiddenFieldId) {
+            var inputElement = $('#' + inputId);
+            var datalist = $('#' + datalistId);
+            var hiddenField = $('#' + hiddenFieldId);
+
+            inputElement.on('input', function () {
+                var userInput = inputElement.val();
+
+                $.ajax({
+                    url: '/get_supplier_suggestions/',
+                    method: 'GET',
+                    data: { input_value: userInput },
+                    success: function (data) {
+                        console.log('Data received:', data);
+
+                        // Clear existing options in datalist
+                        datalist.empty();
+
+                        for (var i = 0; i < data.suggestions.length; i++) {
+                            var suggestion = data.suggestions[i];
+                            var option = $('<option value="' + suggestion.name + ', ' + suggestion.address + ', ' + suggestion.mobileNumber + '" data-id="' + suggestion.id + '">');
+                            datalist.append(option);
+                        }
+                    },
+                    error: function (error) {
+                        console.error('Ajax request failed:', error);
+                    }
+                });
+            });
+
+            // Handle selection from datalist
+            inputElement.on('input', function () {
+                var selectedOption = null;
+
+                // Find the selected option based on the current input value
+                datalist.find('option').each(function () {
+                    if ($(this).val() === inputElement.val()) {
+                        selectedOption = $(this);
+                        return false;  // Exit the loop if the option is found
+                    }
+                });
+
+                if (selectedOption) {
+                    var selectedId = selectedOption.data('id');
+                    hiddenField.val(selectedId);
+                } else {
+                    hiddenField.val('');  // Clear the hidden field if no valid option is selected
+                }
+            });
+        }
+
+
+
+
+
+        // Usage example
+        setupAutocomplete('supplierInput', 'supplierSuggestions', 'hiddenSupplierId');
+    </script>
+
+    <script src="{% static 'js/editTableCells.js' %}"></script>
+
+</body>
+</html>

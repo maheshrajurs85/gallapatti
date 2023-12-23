@@ -4,9 +4,13 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from MainApp.models import Buyers, MandiExpenses, Suppliers, goods
+from MainApp.models import Buyers, ImportedGoods, MandiExpenses, Suppliers, goods
+from django.db.models import Q
 
 # Create your views here.
+
+######################## goods funcations ###############################################################
+# 
 def GoodsView(request):
     goodslist = goods.objects.all()
     return render(request,'goods.html',{'goodslist': goodslist} )
@@ -37,7 +41,10 @@ def goods_add_row(request):
         return redirect(GoodsView)
     
 
-# Goods - Editing and saving existing table data
+
+
+################################################ Editing and saving existing table data#########################
+
 
 @csrf_exempt  # Use this decorator for simplicity; consider using csrf tokens in production
 def update_cell(request):
@@ -64,7 +71,7 @@ def update_cell(request):
             return JsonResponse({'status': 'error', 'message': str(e)})
         
 
-########### Suppliers functions
+################################################### Suppliers functions #####################################################
 
 def SuppliersView(request):
     supplierslist = Suppliers.objects.all()
@@ -91,8 +98,10 @@ def Suppliers_add_row(request):
     else:
         # Handle other HTTP methods as needed
         return redirect(SuppliersView)
+   
     
-############ Buyes funcation 
+
+######################################################## Buyes funcation ################################################################
 
 def BuyersView(request):
     buyerslist = Buyers.objects.all()
@@ -120,7 +129,9 @@ def Buyers_add_row(request):
         # Handle other HTTP methods as needed
         return redirect(BuyersView)
     
-############ Mandi Expenses funcation 
+
+
+############ Mandi Expenses funcation  #########################################################################
 
 def MandiExpensesView(request):
     expenseslist = MandiExpenses.objects.all()
@@ -153,3 +164,78 @@ def MandiExpenses_add_row(request):
     else:
         # Handle other HTTP methods as needed
         return redirect(MandiExpensesView)
+    
+
+
+############################################ Imported Goods funcation ############################################################################
+
+
+def ImportedGoodsView(request):
+    imported_goods_list = ImportedGoods.objects.all()
+    return render(request,'importedgoods.html',{'imported_goods_list': imported_goods_list} )
+
+
+
+# funcation to provide input suggestions 
+
+def get_supplier_suggestions(request):
+    #print("1")
+    input_value = request.GET.get('input_value', '')
+    print(input_value)
+    #print("2")
+    # Fetch matching suppliers from the database
+    suggestions = Suppliers.objects.filter(
+        Q(SupplierName__icontains=input_value) | Q(MobileNumber__icontains=input_value)
+    )[:5]
+    print(suggestions)
+    # Create a list of supplier names
+    suggestion_list = [{'id': supplier.id, 'name': supplier.SupplierName, 'mobileNumber':supplier.MobileNumber, 'address':supplier.FromAddress} for supplier in suggestions]
+    print(suggestion_list)
+    print('inViews')
+    # Return the suggestions as JSON
+    return JsonResponse({'suggestions': suggestion_list})
+
+
+
+def ImportedGoods_add_row(request):
+    if request.method == 'POST':
+        row_id = request.POST.get('row_id')
+        SupplierID = request.POST.get('SupplierID')
+        ImportDate = request.POST.get('ImportDate')
+        GoodsID = request.POST.get('GoodsID')
+        CreatsCount = request.POST.get('CreatsCount')
+        InKGs = request.POST.get('InKGs')
+        GoodsPrice = request.POST.get('GoodsPrice')
+        TotalAmount = request.POST.get('TotalAmount')
+        MandiExpenses = request.POST.get('MandiExpenses')
+        TobePaidToSupplier = request.POST.get('TobePaidToSupplier')
+        BalanceToBePaid = request.POST.get('BalanceToBePaid')
+        SoldStatus = request.POST.get('SoldStatus')
+        BillingStatus = request.POST.get('BillingStatus')
+        DatePaid = request.POST.get('DatePaid')
+        Comment = request.POST.get('Comment')
+        
+        # Save the data to the database using your Django model
+        new_row = ImportedGoods(
+            SupplierID=SupplierID,
+            ImportDate=ImportDate,
+            GoodsID=GoodsID,
+            CreatsCount=CreatsCount,
+            InKGs=InKGs,
+            GoodsPrice=GoodsPrice,
+            TotalAmount=TotalAmount,
+            MandiExpenses=MandiExpenses,
+            TobePaidToSupplier=TobePaidToSupplier,
+            BalanceToBePaid=BalanceToBePaid,
+            SoldStatus=SoldStatus,
+            BillingStatus=BillingStatus,
+            DatePaid=DatePaid,
+            Comment=Comment,
+        )
+        new_row.save()
+
+        # Redirect back to the table view
+        return redirect(ImportedGoodsView)
+    else:
+        # Handle other HTTP methods as needed
+        return redirect(ImportedGoodsView)
