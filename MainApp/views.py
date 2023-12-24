@@ -196,6 +196,31 @@ def get_supplier_suggestions(request):
     return JsonResponse({'suggestions': suggestion_list})
 
 
+def get_goods_suggesions(request):
+    input_value = request.GET.get('input_value', '')
+    
+    # Fetch matching goods from the database
+    suggestions = goods.objects.filter(
+        Q(GoodsName__icontains=input_value) |
+        Q(FirstQualityPrice__icontains=input_value) |
+        Q(SecondQualityPrice__icontains=input_value) |
+        Q(RippedQualityPrice__icontains=input_value)
+    )[:5]
+
+    # Create a list of goods
+    suggestion_list = [
+        {
+            'id': good.id,
+            'name': good.GoodsName,
+        }
+        for good in suggestions
+    ]
+
+    # Return the suggestions as JSON
+    return JsonResponse({'suggestions': suggestion_list})
+
+
+
 
 def ImportedGoods_add_row(request):
     if request.method == 'POST':

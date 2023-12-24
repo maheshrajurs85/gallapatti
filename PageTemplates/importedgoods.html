@@ -27,9 +27,9 @@
                         <table class="table table-striped">
                             <thead>
                                 <tr>
-                                    <th><b>Supplier ID</b></th>
                                     <th><b>Import Date</b></th>
-                                    <th><b>Goods ID</b></th>
+                                    <th><b>Supplier Name</b></th>
+                                    <th><b>Goods Name</b></th>
                                     <th><b>Creats Count</b></th>
                                     <th><b>In KGs</b></th>
                                     <th><b>Goods Price</b></th>
@@ -66,26 +66,30 @@
                                     <form id="newImportedGoodsForm" method="post" action="{% url 'ImportedGoods_add_row' %}" onsubmit="return validateForm('newImportedGoodsForm')">
                                         {% csrf_token %}
                                         <input type="hidden" name="row_id" value="NEW_ID">
-                                        <td style="position: relative;">
-                                        <input type="text" name="SupplierID" id="supplierInput" placeholder="Supplier Name/MobNum" required list="supplierSuggestions">
-                                        <input type="text" name="hiddenSupplierId" id="hiddenSupplierId" placeholder="Do not Type Here" required>
-                                        <datalist id="supplierSuggestions" style="max-height: 150px; overflow-y: auto;"></datalist>
-                                        </td>
-
-                                        <td><input type="datetime-local" name="ImportDate" value="{% now 'Y-m-d H:i' %}" ></td>
-                                        <td><input type="text" name="GoodsID" placeholder="Goods ID" required></td>
-                                        <td><input type="text" name="CreatsCount" placeholder="Creats Count" required></td>
-                                        <td><input type="text" name="InKGs" placeholder="In KGs" required></td>
-                                        <td><input type="text" name="GoodsPrice" placeholder="Goods Price" required></td>
-                                        <td><input type="text" name="TotalAmount" placeholder="Total Amount" required></td>
-                                        <td><input type="text" name="MandiExpenses" placeholder="Mandi Expenses" required></td>
-                                        <td><input type="text" name="TobePaidToSupplier" placeholder="To be Paid to Supplier" required></td>
-                                        <td><input type="text" name="BalanceToBePaid" placeholder="Balance to be Paid" required></td>
-                                        <td><input type="text" name="SoldStatus" placeholder="Sold Status" required></td>
-                                        <td><input type="text" name="BillingStatus" placeholder="Billing Status" required></td>
-                                        <td><input type="text" name="DatePaid" placeholder="Date Paid" required></td>
-                                        <td><input type="text" name="Comment" placeholder="Comment" required></td>
-                                        <td><button type="submit" class="btn btn-info">Save</button></td>
+                                    <td><input type="datetime-local" name="ImportDate" value="{% now 'Y-m-d H:i' %}"></td>
+                                    <td style="position: relative;">
+                                        <input type="text" name="SupplierId" id="supplierInputCellId" placeholder="Supplier Name/MobNum" required list="supplierSuggestionsDLID">
+                                        <input type="text" name="SupplierId" id="HiddenSupplierCellId" placeholder="Do not Type Here" required>
+                                        <datalist id="supplierSuggestionsDLID" style="max-height: 150px; overflow-y: auto;"></datalist>
+                                    </td>
+                                    <td style="position: relative;">
+                                        <input type="text" name="GoodsId" id="GoodsInputCellId" placeholder="Goods Name" required list="goodsSuggestionsDLID">
+                                        <input type="hidden" name="hiddenGoodsCellName" id="hiddenGoodsCellId" required>
+                                        <datalist id="goodsSuggestionsDLID" style="max-height: 150px; overflow-y: auto;"></datalist>
+                                    </td>
+                                    
+                                    <td><input type="text" name="CreatsCount" placeholder="Creats Count" required></td>
+                                    <td><input type="text" name="InKGs" placeholder="In KGs" required></td>
+                                    <td><input type="text" name="GoodsPrice" placeholder="Goods Price" required></td>
+                                    <td><input type="text" name="TotalAmount" placeholder="Total Amount" required></td>
+                                    <td><input type="text" name="MandiExpenses" placeholder="Mandi Expenses" required></td>
+                                    <td><input type="text" name="TobePaidToSupplier" placeholder="To be Paid to Supplier" required></td>
+                                    <td><input type="text" name="BalanceToBePaid" placeholder="Balance to be Paid" required></td>
+                                    <td><input type="text" name="SoldStatus" placeholder="Sold Status" required></td>
+                                    <td><input type="text" name="BillingStatus" placeholder="Billing Status" required></td>
+                                    <td><input type="text" name="DatePaid" placeholder="Date Paid" required></td>
+                                    <td><input type="text" name="Comment" placeholder="Comment" required></td>
+                                    <td><button type="submit" class="btn btn-info">Save</button></td>
                                     </form>
                                 </tr>
                             </tbody>
@@ -105,7 +109,7 @@
 
     <script>
         // Reusable function to handle autocomplete for any input field
-        function setupAutocomplete(inputId, datalistId, hiddenFieldId) {
+        function setupAutocomplete(inputId, datalistId, hiddenFieldId, targetURL) {
             var inputElement = $('#' + inputId);
             var datalist = $('#' + datalistId);
             var hiddenField = $('#' + hiddenFieldId);
@@ -114,7 +118,7 @@
                 var userInput = inputElement.val();
 
                 $.ajax({
-                    url: '/get_supplier_suggestions/',
+                    url: targetURL,
                     method: 'GET',
                     data: { input_value: userInput },
                     success: function (data) {
@@ -125,8 +129,18 @@
 
                         for (var i = 0; i < data.suggestions.length; i++) {
                             var suggestion = data.suggestions[i];
-                            var option = $('<option value="' + suggestion.name + ', ' + suggestion.address + ', ' + suggestion.mobileNumber + '" data-id="' + suggestion.id + '">');
-                            datalist.append(option);
+                            if (targetURL == '/get_supplier_suggestions/') {
+                                var option = $('<option value="' + suggestion.name + ', ' + suggestion.address + ', ' + suggestion.mobileNumber + '" data-id="' + suggestion.id + '">');
+                                datalist.append(option);
+                            }
+                            if (targetURL == '/get_goods_suggesions/') {
+                                var option = $('<option value="' + suggestion.name + '- 1st Quality' + '" data-id= "' + suggestion.id + ',FirstQualityPrice">'); //+ suggestion.address + ', ' + suggestion.mobileNumber + '" data-id="' + suggestion.id + '">');
+                                datalist.append(option);
+                                option = $('<option value="' + suggestion.name + '- 2nd Quality' + '" data-id="' + suggestion.id + ',SecondQualityPrice">');
+                                datalist.append(option);
+                                option = $('<option value="' + suggestion.name + '- Ripped Quality' + '" data-id="' + suggestion.id + ',RippedQualityPrice">');
+                                datalist.append(option);
+                            }
                         }
                     },
                     error: function (error) {
@@ -161,7 +175,8 @@
 
 
         // Usage example
-        setupAutocomplete('supplierInput', 'supplierSuggestions', 'hiddenSupplierId');
+        setupAutocomplete('supplierInputCellId', 'supplierSuggestionsDLID', 'HiddenSupplierCellId', '/get_supplier_suggestions/');
+        setupAutocomplete('GoodsInputCellId', 'goodsSuggestionsDLID', 'hiddenGoodsCellId', '/get_goods_suggesions/');
     </script>
 
     <script src="{% static 'js/editTableCells.js' %}"></script>
