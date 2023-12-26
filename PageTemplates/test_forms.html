@@ -1,0 +1,91 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>InStock</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="{% static 'css/nofileextnc.css' %}" rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="{% static 'css/font-awesome.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script>
+        function loadEditTableCellsScript() {
+            var script = document.createElement('script');
+            script.src = "{% static 'js/editTableCells.js' %}";
+            document.body.appendChild(script);
+        }
+
+        function addForm() {
+            var table = document.getElementById('form-table');
+            var lastRow = table.rows[table.rows.length - 1];
+            var newRow = lastRow.cloneNode(true);
+
+            // Increment the total forms count
+            var totalFormsInput = document.getElementById('goods-TOTAL_FORMS');
+            totalFormsInput.value = parseInt(totalFormsInput.value) + 1;
+
+            // Update the form index in the cloned row
+            newRow.innerHTML = newRow.innerHTML.replace(/-(\d+)-/g, function (match, p1) {
+                return '-' + (parseInt(p1) + 1) + '-';
+            });
+
+            // Clear values in the new form
+            for (var i = 0; i < newRow.cells.length; i++) {
+                var input = newRow.cells[i].getElementsByTagName('input')[0];
+                if (input) {
+                    input.value = '';
+                }
+            }
+
+            table.appendChild(newRow);
+        }
+
+
+
+        window.onload = function () {
+            loadEditTableCellsScript();
+
+            var addButton = document.getElementById('add-form-button');
+            if (addButton) {
+                addButton.addEventListener('click', addForm);
+            }
+        };
+    </script>
+</head>
+
+<body>
+
+    <form method="post" action="">
+        {% csrf_token %}
+        {{ formset.management_form }}
+        <input type="hidden" id="goods-TOTAL_FORMS" name="goods-TOTAL_FORMS" value="{{ formset.total_form_count }}">
+
+
+        <table id="form-table">
+            <thead>
+                <tr>
+                    <th>Goods Name</th>
+                    <th>First Quality Price</th>
+                    <th>Second Quality Price</th>
+                    <th>Ripped Quality Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for form in formset %}
+                <tr>
+                    <td>{{ form.GoodsName }}</td>
+                    <td>{{ form.FirstQualityPrice }}</td>
+                    <td>{{ form.SecondQualityPrice }}</td>
+                    <td>{{ form.RippedQualityPrice }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <button type="button" id="add-form-button">Add Form</button>
+        <input type="submit" value="Submit">
+    </form>
+
+</body>
+</html>

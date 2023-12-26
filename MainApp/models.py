@@ -4,6 +4,13 @@ from django.db import models
 from django_admin_row_actions import AdminRowActionsMixin
 
 # Create your models here.https://docs.djangoproject.com/en/5.0/ref/models/fields/#default"
+class goods1(models.Model):
+    GoodsName = models.CharField(max_length=50)
+    FirstQualityPrice = models.IntegerField(default=0, blank=True, null=True)
+    SecondQualityPrice = models.IntegerField(default=0, blank=True, null=True)
+    RippedQualityPrice = models.IntegerField(default=0, blank=True, null=True)
+    class Meta:
+        ordering = ['GoodsName'] #oder/sort by 
 
 class goods(models.Model):
     GoodsName = models.CharField(max_length=50)

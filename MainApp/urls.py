@@ -35,8 +35,10 @@ urlpatterns = [
     path('mandiExpenses/', views.MandiExpensesView, name='MandiExpenses'),
     path('expenses_add_row/', views.MandiExpenses_add_row, name='MandiExpenses_add_row'),
     
-    path('importedgoods/', views.ImportedGoodsView, name='ImportedGoodsView'),
+    #path('importedgoods/', views.ImportedGoodsView, name='ImportedGoodsView'),
     path('importedgoods_add_row/', views.ImportedGoods_add_row, name='ImportedGoods_add_row'),
     path('get_supplier_suggestions/', views.get_supplier_suggestions, name='get_supplier_suggestions'),
     path('get_goods_suggesions/', views.get_goods_suggesions, name='get_goods_suggesions'),
+
+    path('goods-formset/', views.goods_formset_view, name='goods_formset_view'),
 ]

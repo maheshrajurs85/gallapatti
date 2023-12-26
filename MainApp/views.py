@@ -6,6 +6,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from MainApp.models import Buyers, ImportedGoods, MandiExpenses, Suppliers, goods
 from django.db.models import Q
+from .forms import GoodsFormSet
 
 # Create your views here.
 
@@ -264,3 +265,41 @@ def ImportedGoods_add_row(request):
     else:
         # Handle other HTTP methods as needed
         return redirect(ImportedGoodsView)
+
+
+    # views.py
+
+
+from django.shortcuts import render, redirect
+from .forms import GoodsFormSet
+
+def goods_formset_view(request):
+    if request.method == 'POST':
+        formset = GoodsFormSet(request.POST, prefix='goods')
+        if formset.is_valid():
+            for form in formset:
+                # Calculate the sum of 'FirstQualityPrice' and 'SecondQualityPrice'
+                first_quality_price = form.cleaned_data.get('FirstQualityPrice', 0)
+                second_quality_price = form.cleaned_data.get('SecondQualityPrice', 0)
+                ripped_quality_price = first_quality_price + second_quality_price
+
+                # Create an instance of the model
+                instance = form.save(commit=False)
+
+                # Assign the sum to 'RippedQualityPrice'
+                instance.RippedQualityPrice = ripped_quality_price
+
+                # Save the instance
+                instance.save()
+
+            return redirect('http://127.0.0.1:8000/goods-formset/')  # Replace 'success_url' with your actual success URL
+        else:
+            print(formset.errors)
+    else:
+        formset = GoodsFormSet(prefix='goods')
+
+    return render(request, 'test_forms.html', {'formset': formset})
+
+
+
+

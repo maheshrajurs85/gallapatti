@@ -29,8 +29,17 @@
                                 <tr>
                                     <th><b>Import Date</b></th>
                                     <th><b>Supplier Name</b></th>
-                                    <th><b>Goods Name & Quality</b></th>
-                                    <th><b>Goods Quantity</b></th>
+                                    <th><b>Goods Name</b></th>
+                                    <th><b>Creats Count</b></th>
+                                    <th><b>In KGs</b></th>
+                                    <th><b>Goods Price</b></th>
+                                    <th><b>Total Amount</b></th>
+                                    <th><b>Mandi Expenses</b></th>
+                                    <th><b>To be Paid to Supplier</b></th>
+                                    <th><b>Balance to be Paid</b></th>
+                                    <th><b>Sold Status</b></th>
+                                    <th><b>Billing Status</b></th>
+                                    <th><b>Date Paid</b></th>
                                     <th><b>Comment</b></th>
                                 </tr>
                             </thead>
@@ -41,6 +50,15 @@
                                     <td id="cell_{{ imported_goods.id }}_ImportDate" contenteditable="true" onblur="updateCell('{{ imported_goods.id }}', 'ImportDate', this.innerText, 'ImportedGoods')">{{ imported_goods.ImportDate }}</td>
                                     <td id="cell_{{ imported_goods.id }}_GoodsID" contenteditable="true" onblur="updateCell('{{ imported_goods.id }}', 'GoodsID', this.innerText, 'ImportedGoods')">{{ imported_goods.GoodsID }}</td>
                                     <td id="cell_{{ imported_goods.id }}_CreatsCount" contenteditable="true" onblur="updateCell('{{ imported_goods.id }}', 'CreatsCount', this.innerText, 'ImportedGoods')">{{ imported_goods.CreatsCount }}</td>
+                                    <td id="cell_{{ imported_goods.id }}_InKGs" contenteditable="true" onblur="updateCell('{{ imported_goods.id }}', 'InKGs', this.innerText, 'ImportedGoods')">{{ imported_goods.InKGs }}</td>
+                                    <td id="cell_{{ imported_goods.id }}_GoodsPrice" contenteditable="true" onblur="updateCell('{{ imported_goods.id }}', 'GoodsPrice', this.innerText, 'ImportedGoods')">{{ imported_goods.GoodsPrice }}</td>
+                                    <td id="cell_{{ imported_goods.id }}_TotalAmount" contenteditable="true" onblur="updateCell('{{ imported_goods.id }}', 'TotalAmount', this.innerText, 'ImportedGoods')">{{ imported_goods.TotalAmount }}</td>
+                                    <td id="cell_{{ imported_goods.id }}_MandiExpenses" contenteditable="true" onblur="updateCell('{{ imported_goods.id }}', 'MandiExpenses', this.innerText, 'ImportedGoods')">{{ imported_goods.MandiExpenses }}</td>
+                                    <td id="cell_{{ imported_goods.id }}_TobePaidToSupplier" contenteditable="true" onblur="updateCell('{{ imported_goods.id }}', 'TobePaidToSupplier', this.innerText, 'ImportedGoods')">{{ imported_goods.TobePaidToSupplier }}</td>
+                                    <td id="cell_{{ imported_goods.id }}_BalanceToBePaid" contenteditable="true" onblur="updateCell('{{ imported_goods.id }}', 'BalanceToBePaid', this.innerText, 'ImportedGoods')">{{ imported_goods.BalanceToBePaid }}</td>
+                                    <td id="cell_{{ imported_goods.id }}_SoldStatus" contenteditable="true" onblur="updateCell('{{ imported_goods.id }}', 'SoldStatus', this.innerText, 'ImportedGoods')">{{ imported_goods.SoldStatus }}</td>
+                                    <td id="cell_{{ imported_goods.id }}_BillingStatus" contenteditable="true" onblur="updateCell('{{ imported_goods.id }}', 'BillingStatus', this.innerText, 'ImportedGoods')">{{ imported_goods.BillingStatus }}</td>
+                                    <td id="cell_{{ imported_goods.id }}_DatePaid" contenteditable="true" onblur="updateCell('{{ imported_goods.id }}', 'DatePaid', this.innerText, 'ImportedGoods')">{{ imported_goods.DatePaid }}</td>
                                     <td id="cell_{{ imported_goods.id }}_Comment" contenteditable="true" onblur="updateCell('{{ imported_goods.id }}', 'Comment', this.innerText, 'ImportedGoods')">{{ imported_goods.Comment }}</td>
                                 </tr>
                                 {% endfor %}
@@ -48,24 +66,30 @@
                                     <form id="newImportedGoodsForm" method="post" action="{% url 'ImportedGoods_add_row' %}" onsubmit="return validateForm('newImportedGoodsForm')">
                                         {% csrf_token %}
                                         <input type="hidden" name="row_id" value="NEW_ID">
-                                    <td><input type="datetime-local" name="ImportDate" value="{% now 'Y-m-d H:i' %}" tabindex="-1"></td>
+                                    <td><input type="datetime-local" name="ImportDate" value="{% now 'Y-m-d H:i' %}"></td>
                                     <td style="position: relative;">
-                                        <input type="text" name="SupplierId" id="supplierInputCellId" placeholder="Supplier Name/MobNum" required list="supplierSuggestionsDLID" autofocus tabindex="1">
-                                        <input type="text" name="SupplierId" id="HiddenSupplierCellId" placeholder="Do not Type Here" required tabindex="-1">
+                                        <input type="text" name="SupplierId" id="supplierInputCellId" placeholder="Supplier Name/MobNum" required list="supplierSuggestionsDLID">
+                                        <input type="text" name="SupplierId" id="HiddenSupplierCellId" placeholder="Do not Type Here" required>
                                         <datalist id="supplierSuggestionsDLID" style="max-height: 150px; overflow-y: auto;"></datalist>
                                     </td>
                                     <td style="position: relative;">
-                                        <input type="text" name="GoodsId" id="GoodsInputCellId" placeholder="Goods Name" required list="goodsSuggestionsDLID" tabindex="2">
+                                        <input type="text" name="GoodsId" id="GoodsInputCellId" placeholder="Goods Name" required list="goodsSuggestionsDLID">
                                         <input type="hidden" name="hiddenGoodsCellName" id="hiddenGoodsCellId" required>
                                         <datalist id="goodsSuggestionsDLID" style="max-height: 150px; overflow-y: auto;"></datalist>
                                     </td>
-                                    <td><input type="number" min="1" id="creatsCountInput" name="GoodsQunatity" placeholder="in Tones/Creats/Kgs" required tabindex="3"></td>
-                                    <td>
-                                        <label><input type="radio" name="QuantityUnit" value="Tones">Tones</label>
-                                        <label><input type="radio" name="QuantityUnit" value="Creats" checked tabindex="4">Creats</label>
-                                        <label><input type="radio" name="QuantityUnit" value="Kgs">Kgs</label>
-                                    </td>
-                                    <td><button type="submit" class="btn btn-info" tabindex="5">Save</button></td>
+                                    
+                                    <td><input type="text" name="CreatsCount" placeholder="Creats Count" required></td>
+                                    <td><input type="text" name="InKGs" placeholder="In KGs" required></td>
+                                    <td><input type="text" name="GoodsPrice" placeholder="Goods Price" required></td>
+                                    <td><input type="text" name="TotalAmount" placeholder="Total Amount" required></td>
+                                    <td><input type="text" name="MandiExpenses" placeholder="Mandi Expenses" required></td>
+                                    <td><input type="text" name="TobePaidToSupplier" placeholder="To be Paid to Supplier" required></td>
+                                    <td><input type="text" name="BalanceToBePaid" placeholder="Balance to be Paid" required></td>
+                                    <td><input type="text" name="SoldStatus" placeholder="Sold Status" required></td>
+                                    <td><input type="text" name="BillingStatus" placeholder="Billing Status" required></td>
+                                    <td><input type="text" name="DatePaid" placeholder="Date Paid" required></td>
+                                    <td><input type="text" name="Comment" placeholder="Comment" required></td>
+                                    <td><button type="submit" class="btn btn-info">Save</button></td>
                                     </form>
                                 </tr>
                             </tbody>
@@ -110,11 +134,11 @@
                                 datalist.append(option);
                             }
                             if (targetURL == '/get_goods_suggesions/') {
-                                var option = $('<option value="' + suggestion.name + ', 1st Quality' + '" data-id= "' + suggestion.id + ',FirstQualityPrice">'); //+ suggestion.address + ', ' + suggestion.mobileNumber + '" data-id="' + suggestion.id + '">');
+                                var option = $('<option value="' + suggestion.name + '- 1st Quality' + '" data-id= "' + suggestion.id + ',FirstQualityPrice">'); //+ suggestion.address + ', ' + suggestion.mobileNumber + '" data-id="' + suggestion.id + '">');
                                 datalist.append(option);
-                                option = $('<option value="' + suggestion.name + ', 2nd Quality' + '" data-id="' + suggestion.id + ',SecondQualityPrice">');
+                                option = $('<option value="' + suggestion.name + '- 2nd Quality' + '" data-id="' + suggestion.id + ',SecondQualityPrice">');
                                 datalist.append(option);
-                                option = $('<option value="' + suggestion.name + ', Ripped Quality' + '" data-id="' + suggestion.id + ',RippedQualityPrice">');
+                                option = $('<option value="' + suggestion.name + '- Ripped Quality' + '" data-id="' + suggestion.id + ',RippedQualityPrice">');
                                 datalist.append(option);
                             }
                         }
@@ -145,6 +169,8 @@
                 }
             });
         }
+
+
 
 
 
