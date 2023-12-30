@@ -1,0 +1,324 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>InStock</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="{% static 'css/nofileextnc.css' %}" rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="{% static 'css/font-awesome.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="{% static 'js/editTableCells.js' %}"></script>
+    <script>
+        function loadEditTableCellsScript() {
+            var script = document.createElement('script');
+            script.src = "{% static 'js/editTableCells.js' %}";
+            document.body.appendChild(script);
+        }
+
+        function addForm() {
+            var table = document.getElementById('form-table');
+            var lastRow = table.rows[table.rows.length - 1];
+            var newRow = lastRow.cloneNode(true);
+            console.log('table.rows.length', table.rows.length);
+            console.log('newRow.cells.length', newRow.cells.length);
+
+            for (var i = 0; i < newRow.cells.length; i++) {
+                var input = newRow.cells[i].querySelector('input');
+                //var datalist = newRow.cells[i].querySelector('datalist');
+                if (input) {
+                    if (!(input.name.endsWith('ImportDate') || input.name.endsWith('SupplierDetails') || input.name.endsWith('SupplierID'))) {
+                        input.value = '';
+                        if (input.name.endsWith('MeasurementUnits')) { input.value = 'Creats' }
+                        if (input.name.endsWith('GoodsNameAndQuality')) { input.focus(); }
+                        input.name = input.name.replace(/-(\d+)-/, function (match, p1) {
+                            return '-' + (parseInt(p1) + 1) + '-';
+                        });
+                    } else {
+                        newRow.cells[i].innerHTML = '';
+                    }
+                }
+            }
+
+            var totalFormsInput = document.getElementById('id_importGoods-TOTAL_FORMS');
+            var newTotalForms = parseInt(totalFormsInput.value);
+
+            var formsetPrefix = 'importGoods-' + newTotalForms + '-';
+            updateFormPrefix(newRow, formsetPrefix);
+
+            // Update the total forms input
+            totalFormsInput.value = newTotalForms+1;
+            console.log('totalFormsInput.value 123', totalFormsInput.value);
+            var addMoreButton = newRow.cells[5].querySelector('button');
+            if (addMoreButton) {
+                addMoreButton.addEventListener('click', addForm);
+            }
+
+            var removeButton = newRow.cells[7].querySelector('button');
+            removeButton.disabled = false;
+            if (!removeButton) {
+                console.log('inside remove button if');
+                // Append the "Remove Form" button to the new row
+                var removeButton = document.createElement('button');
+                removeButton.type = 'button';
+                removeButton.textContent = 'Cancel';
+                removeButton.setAttribute('class', "btn btn-info")
+                removeButton.addEventListener('click', function () {
+                    removeForm(newRow);
+                });
+                newRow.cells[7].appendChild(removeButton);
+            }
+            else {
+                removeButton.addEventListener('click', function () {
+                    removeForm(newRow);
+                });
+            }
+
+            table.appendChild(newRow);
+            for (var i = 0; i < newRow.cells.length; i++) {
+                var input = newRow.cells[i].querySelector('input');
+                if (input && input.name.endsWith('GoodsNameAndQuality')) {
+                    input.focus();
+                    break;  // Stop the loop after setting focus
+                }
+            }
+            console.log('new table.rows.length', table.rows.length);
+            var j = 0;
+            j = table.rows.length - 2;
+            console.log('importGoods-' + j + '-GoodsInputCellId', 'importGoods-' + j + '-goodsSuggestionsDLID', 'importGoods-' + j + '-hiddenGoodsCellId', '/get_goods_suggesions/');
+
+            setupAutocomplete('importGoods-' + j + '-GoodsInputCellId', 'importGoods-' + j + '-goodsSuggestionsDLID', 'importGoods-' + j + '-hiddenGoodsCellId', '/get_goods_suggesions/');
+        }
+
+        function removeForm(row) {
+            row.parentNode.removeChild(row);
+            var totalFormsInput = document.getElementById('id_importGoods-TOTAL_FORMS');
+            totalFormsInput.value = parseInt(totalFormsInput.value) - 1;
+        }
+
+        function updateFormPrefix(row, formsetPrefix) {
+            var inputs = row.getElementsByTagName('input');
+            for (var i = 0; i < inputs.length; i++) {
+                var input = inputs[i];
+                if (input.name) {
+                    input.name = input.name.replace(/importGoods-\d+-/, formsetPrefix);
+                }
+                if (input.id) {
+                    input.id = input.id.replace(/importGoods-\d+-/, formsetPrefix);
+                }
+                if (input.list && input.list.id) {
+                    //console.log('in datalist id');
+                    //console.log('d1 :', input.list);
+                    //console.log('d2 :', input.list.id);
+                    //console.log('d3 :', input.datalist);
+                    //console.log('d4 :', input.datalistId);
+                    //console.log('in last datalist id');
+
+
+                    // Replace the datalist id
+
+                    //input.list.id = input.list.id.replace(/importGoods-\d+-/, formsetPrefix);
+                    //input.list.id = input.list.id;
+                    //console.log('d2 :', input.list.id);
+                    input.setAttribute('list', input.list.id.replace(/importGoods-\d+-/, formsetPrefix));
+
+                }
+            }
+            var datalists = row.getElementsByTagName('datalist');
+            //console.log('ssdlfkjlsjdfl');
+            //console.log(datalists);
+            //console.log('ssdlfkjlsjdfl');
+            for (var i = 0; i < datalists.length; i++) {
+                var datalist = datalists[i];
+                /*console.log(datalist.id);*/
+                if (datalist.id.endsWith('goodsSuggestionsDLID') || datalist.id.endsWith('MeasurementUnitslist')) {
+                    datalist.id = datalist.id.replace(/importGoods-\d+-/, formsetPrefix);
+                }
+            }
+        }
+
+        window.onload = function () {
+            loadEditTableCellsScript();
+            var addButton = document.getElementById('add-form-button');
+            if (addButton) {
+                addButton.addEventListener('click', addForm);
+            }
+        };
+    </script>
+</head>
+
+<body>
+    <section class="ftco-section">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-6 text-center mb-5">
+                    <h2 class="heading-section" style="font-weight: bold;">Import Goods</h2>
+                </div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-md-13">
+                    <div class="table-wrap">
+                        <form method="post" action="{% url 'importgoods' %}" id="importGoodsForm" onsubmit="return validateForm('importGoodsForm')" enctype="multipart/form-data">
+                            <script>console.log('1st like');</script>
+                            {% csrf_token %}
+                            {{ formset.management_form }}
+                            <!--<input type="hidden" id="importGoods-TOTAL_FORMS" name="importGoods-TOTAL_FORMS" value="{{ formset.total_form_count }}">-->
+
+                            <table id="form-table" class="table table-striped">
+
+                                <thead>
+                                    <tr style="white-space: nowrap;">
+                                        <!--style="background-color: #35b9ce"-->
+                                        <th><b>Import Date</b></th>
+                                        <th><b>Supplier Name</b></th>
+                                        <th><b>Goods Name & Quality</b></th>
+                                        <th><b>Goods Quantity</b></th>
+                                        <th><b>Units</b></th>
+                                        <th style="white-space: nowrap;"><b>Add More</b></th>
+                                        <th><b>Submit</b></th>
+                                        <th><b>Cancel</b></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for form in formset %}
+                                    
+                                    i = {{forloop.counter0}}
+                                    
+                                    <tr>
+                                        <!--style="background-color: #fff"-->
+                                        <td><input type="datetime-local" name="{{ formset.prefix }}-{{ forloop.counter0 }}-ImportDate" value="{% now 'Y-m-d H:i' %}" tabindex="-1"></td>
+                                        <td style="position: relative;">
+                                            <input type="text" name="{{ formset.prefix }}-{{ forloop.counter0 }}-SupplierDetails" id="{{ formset.prefix }}-{{ forloop.counter0 }}-supplierInputCellId" placeholder="Supplier Name/MobNum" required list="{{ formset.prefix }}-{{ forloop.counter0 }}-supplierSuggestionsDLID" autocomplete="off" autofocus tabindex="1">
+                                            <input type="text" name="{{ formset.prefix }}-{{ forloop.counter0 }}-SupplierID" id="{{ formset.prefix }}-{{ forloop.counter0 }}-HiddenSupplierCellId" placeholder="Do not Type Here" required autocomplete="off" tabindex="-1">
+                                            <datalist id="{{ formset.prefix }}-{{ forloop.counter0 }}-supplierSuggestionsDLID" style="max-height: 150px; overflow-y: auto;"></datalist>
+                                        </td>
+                                        <td style="position: relative;">
+                                            <input type="text" name="{{ formset.prefix }}-{{ forloop.counter0 }}-GoodsNameAndQuality" id="{{ formset.prefix }}-{{ forloop.counter0 }}-GoodsInputCellId" placeholder="Goods Name" autocomplete="off" required list="{{ formset.prefix }}-{{ forloop.counter0 }}-goodsSuggestionsDLID" tabindex="1">
+                                            <input type="hidden" name="{{ formset.prefix }}-{{ forloop.counter0 }}-hiddenGoodsCellName" id="{{ formset.prefix }}-{{ forloop.counter0 }}-hiddenGoodsCellId" required autocomplete="off">
+                                            <datalist id="{{ formset.prefix }}-{{ forloop.counter0 }}-goodsSuggestionsDLID" style="max-height: 150px; overflow-y: auto;"></datalist>
+                                        </td>
+                                        <td style="position: relative;"><input type="number" autocomplete="off" min="1" id="creatsCountInput" name="{{ formset.prefix }}-{{ forloop.counter0 }}-GoodsQuantity" placeholder="in Tones/Creats/Kgs" required tabindex="1">{{ form.creatsCount }}</td>
+                                        <td style="position: relative;">
+                                            <input list="{{ formset.prefix }}-{{ forloop.counter0 }}-MeasurementUnitslist" name="{{ formset.prefix }}-{{ forloop.counter0 }}-MeasurementUnits" id="{{ formset.prefix }}-{{ forloop.counter0 }}-MeasurementUnits" autocomplete="off" tabindex="1" required value="Creats">
+                                            <datalist id="{{ formset.prefix }}-{{ forloop.counter0 }}-MeasurementUnitslist">
+                                                <option value="Tones">Tones</option>
+                                                <option value="Creats">Creats</option>
+                                                <option value="Kgs">Kgs</option>
+                                            </datalist>
+                                        </td>
+                                        <td style="position: relative;">
+                                            <!--<div class="form-buttons-container">-->
+                                            <button type="button" class="btn btn-info" id="add-form-button" tabindex="1" style="white-space: nowrap;">Add More</button>
+                                        </td>
+                                        <td style="position: relative;">
+                                            <button type="submit" class="btn btn-info" tabindex="1">Submit</button>
+                                        </td>
+                                        <td style="position: relative;">
+                                            <button type="button" class="btn btn-info" id="cancel-form-button" disabled tabindex="-1">Cancel</button>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+    <script src="{% static 'js/popper.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/main.js' %}"></script>
+    <script src="{% static 'js/editTableCells.js' %}"></script>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+    <script>
+        // Reusable function to handle autocomplete for any input field
+        function setupAutocomplete(inputId, datalistId, hiddenFieldId, targetURL) {
+            var inputElement = $('#' + inputId);
+            var datalist = $('#' + datalistId);
+            var hiddenField = $('#' + hiddenFieldId);
+
+            inputElement.on('input', function () {
+                var userInput = inputElement.val();
+
+                $.ajax({
+                    url: targetURL,
+                    method: 'GET',
+                    data: { input_value: userInput },
+                    success: function (data) {
+                        console.log('Data received:', data);
+
+                        // Clear existing options in datalist
+                        datalist.empty();
+
+                        for (var i = 0; i < data.suggestions.length; i++) {
+                            var suggestion = data.suggestions[i];
+                            if (targetURL == '/get_supplier_suggestions/') {
+                                var option = $('<option value="' + suggestion.name + ', ' + suggestion.address + ', ' + suggestion.mobileNumber + '" data-id="' + suggestion.id + '">');
+                                datalist.append(option);
+                            }
+                            if (targetURL == '/get_goods_suggesions/') {
+                                var option = $('<option value="' + suggestion.name + ', 1st Quality' + '" data-id= "' + suggestion.id + ',FirstQualityPrice">'); //+ suggestion.address + ', ' + suggestion.mobileNumber + '" data-id="' + suggestion.id + '">');
+                                datalist.append(option);
+                                option = $('<option value="' + suggestion.name + ', 2nd Quality' + '" data-id="' + suggestion.id + ',SecondQualityPrice">');
+                                datalist.append(option);
+                                option = $('<option value="' + suggestion.name + ', Ripped Quality' + '" data-id="' + suggestion.id + ',RippedQualityPrice">');
+                                datalist.append(option);
+                            }
+                        }
+                    },
+                    error: function (error) {
+                        console.error('Ajax request failed:', error);
+                    }
+                });
+            });
+
+            // Handle selection from datalist
+            inputElement.on('input', function () {
+                var selectedOption = null;
+
+                // Find the selected option based on the current input value
+                datalist.find('option').each(function () {
+                    if ($(this).val() === inputElement.val()) {
+                        selectedOption = $(this);
+                        return false;  // Exit the loop if the option is found
+                    }
+                });
+
+                if (selectedOption) {
+                    var selectedId = selectedOption.data('id');
+                    hiddenField.val(selectedId);
+                } else {
+                    hiddenField.val('');  // Clear the hidden field if no valid option is selected
+                }
+            });
+        }
+
+
+
+        // Usage example
+        var table = document.getElementById('form-table');
+        console.log('table.rows.length', table.rows.length);
+        for (var i = 0; i <table.rows.length-1; i++) {
+            console.log('importGoods-' + i + '-supplierInputCellId', 'importGoods-' + i + '-supplierSuggestionsDLID', 'importGoods-' + i + '-HiddenSupplierCellId', '/get_supplier_suggestions/');
+            setupAutocomplete('importGoods-' + i + '-supplierInputCellId', 'importGoods-' + i + '-supplierSuggestionsDLID', 'importGoods-' + i + '-HiddenSupplierCellId', '/get_supplier_suggestions/');
+            setupAutocomplete('importGoods-' + i + '-GoodsInputCellId', 'importGoods-' + i + '-goodsSuggestionsDLID', 'importGoods-' + i + '-hiddenGoodsCellId', '/get_goods_suggesions/');
+        }
+    </script>
+
+    <script src="{% static 'js/editTableCells.js' %}"></script>
+    <ol>
+        <li>fix 1st row alignment and spacing and input box size compared with 2nd row</li>
+        <li>every thing should look structured</li>
+        <li>1st section h and t space waste</li>
+        <li>table stipd is not working </li>
+        <li>between header and 1st row no line is there</li>
+        <li>unit column size / can also be made it as selection list </li>
+    </ol>
+
+</body>
+</html>

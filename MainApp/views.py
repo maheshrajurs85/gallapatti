@@ -6,7 +6,9 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from MainApp.models import Buyers, ImportedGoods, MandiExpenses, Suppliers, goods
 from django.db.models import Q
-from .forms import GoodsFormSet
+from django.forms import formset_factory
+from .forms import GoodsFormSet, ImportGoodsFormSet
+
 
 # Create your views here.
 
@@ -220,9 +222,6 @@ def get_goods_suggesions(request):
     # Return the suggestions as JSON
     return JsonResponse({'suggestions': suggestion_list})
 
-
-
-
 def ImportedGoods_add_row(request):
     if request.method == 'POST':
         row_id = request.POST.get('row_id')
@@ -267,22 +266,109 @@ def ImportedGoods_add_row(request):
         return redirect(ImportedGoodsView)
 
 
-    # views.py
 
+from .forms import ImportGoodsFormSet
+
+def importgoods(request):
+    if request.method == 'POST':
+        print(request.POST);
+        
+
+        import_date = request.POST[f'importGoods-{0}-ImportDate'];
+        supplier_details = request.POST[f'importGoods-{0}-SupplierDetails'];
+        supplier_id = request.POST[f'importGoods-{0}-SupplierID'];
+        print(f'importGoods-{0}-ImportDate: {import_date}');
+        print(f'importGoods-{0}-SupplierDetails: {supplier_details}');
+        print(f'importGoods-{0}-SupplierID: {supplier_id}');
+        
+       
+
+        for i in range(int(request.POST['importGoods-TOTAL_FORMS'])):
+            goods_name_and_quality_i = request.POST[f'importGoods-{i}-GoodsNameAndQuality']
+            goods_quantity_i = request.POST[f'importGoods-{i}-GoodsQuantity']
+            measurement_units_i = request.POST[f'importGoods-{i}-MeasurementUnits']
+            print(f'importGoods-{i}-GoodsNameAndQuality: {goods_name_and_quality_i}')
+            print(f'importGoods-{i}-GoodsQuantity: {goods_quantity_i}')
+            print(f'importGoods-{i}-MeasurementUnits: {measurement_units_i}')
+            print('-' * 30)  # Separator for better readability
+            
+
+
+
+        mutable_post = request.POST.copy();
+
+                # Add a new entry
+        if ((int(request.POST['importGoods-TOTAL_FORMS'])) > 1):
+            for i in range(1, int(request.POST['importGoods-TOTAL_FORMS'])):
+                new_key = f'importGoods-{i}-SupplierID';
+                new_value = request.POST[f'importGoods-0-SupplierID'];
+                mutable_post[new_key] = new_value;
+
+        formset = ImportGoodsFormSet(mutable_post, prefix='importGoods')
+        if formset.is_valid():
+            print('valid : mutable_post', mutable_post);
+            for form in formset:
+                # print('formmmm', form)
+                print('supplier name :',form.cleaned_data.get('SupplierID', 0));
+                print('supplier details : ',form.cleaned_data.get('SupplierDetails', 0));
+                print('Goods Name And Quality :',form.cleaned_data.get('GoodsNameAndQuality', 0));
+                print('hiddenGoodsCellName',form.cleaned_data.get('hiddenGoodsCellName', 0));
+                print('GoodsQuantity', form.cleaned_data.get('GoodsQuantity', 0));
+                print('MeasurementUnits', form.cleaned_data.get('MeasurementUnits', 0));
+                print('date printed:',form.cleaned_data.get('ImportDate', 0));
+                instance = form.save(commit=False)
+
+                # Assign the sum to 'RippedQualityPrice'
+                instance.GoodsPrice = 0
+                instance.TotalAmount = 0
+                instance.MandiExpenses = 0
+                instance.TobePaidToSupplier = 0
+                instance.BalanceToBePaid = 0
+                instance.Comment = 'no Comments'
+                
+                
+
+                # Save the instance
+                instance.save()
+                print('out side if');
+            # Your processing logic here
+            print('formmmm end');
+            return redirect('http://127.0.0.1:8000/importgoods/')  # Replace with your actual success URL
+        else:
+            print('errorrrr invalid', formset.errors)
+            return redirect('http://127.0.0.1:8000/importgoods/')
+    else:
+        formset = ImportGoodsFormSet(prefix='importGoods')
+
+    return render(request, 'importgoods.html', {'formset': formset})
+
+
+
+
+
+################## TEStng ######################
 
 from django.shortcuts import render, redirect
 from .forms import GoodsFormSet
 
 def goods_formset_view(request):
+    print(request);
     if request.method == 'POST':
+        
         formset = GoodsFormSet(request.POST, prefix='goods')
+        print(formset);
         if formset.is_valid():
+            # print('request555', request);
+            # print('validddd');
+            # print('formset555', formset);
             for form in formset:
+                # print('Form Errors:', form.errors)
+                # print('form 1')
                 # Calculate the sum of 'FirstQualityPrice' and 'SecondQualityPrice'
                 first_quality_price = form.cleaned_data.get('FirstQualityPrice', 0)
                 second_quality_price = form.cleaned_data.get('SecondQualityPrice', 0)
                 ripped_quality_price = first_quality_price + second_quality_price
-
+                print('variable:', first_quality_price,second_quality_price, ripped_quality_price)
                 # Create an instance of the model
                 instance = form.save(commit=False)
 
@@ -294,6 +380,8 @@ def goods_formset_view(request):
 
             return redirect('http://127.0.0.1:8000/goods-formset/')  # Replace 'success_url' with your actual success URL
         else:
+            print('formsetttt invalid', formset)
+            print('errorrrr invalid', formset.errors)
             print(formset.errors)
     else:
         formset = GoodsFormSet(prefix='goods')

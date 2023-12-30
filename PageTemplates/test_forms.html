@@ -21,27 +21,33 @@
             var lastRow = table.rows[table.rows.length - 1];
             var newRow = lastRow.cloneNode(true);
 
-            // Increment the total forms count
-            var totalFormsInput = document.getElementById('goods-TOTAL_FORMS');
-            totalFormsInput.value = parseInt(totalFormsInput.value) + 1;
-
-            // Update the form index in the cloned row
-            newRow.innerHTML = newRow.innerHTML.replace(/-(\d+)-/g, function (match, p1) {
-                return '-' + (parseInt(p1) + 1) + '-';
-            });
-
-            // Clear values in the new form
+            // Clear values in the new form and exclude unnecessary fields
             for (var i = 0; i < newRow.cells.length; i++) {
                 var input = newRow.cells[i].getElementsByTagName('input')[0];
                 if (input) {
-                    input.value = '';
+                    // Check the input name and include only FirstQualityPrice and SecondQualityPrice
+                    if (input.name.endsWith('FirstQualityPrice') || input.name.endsWith('SecondQualityPrice') || input.name.endsWith('GoodsName')) {
+                       // if (input.name.endsWith('GoodsName')) { input. }
+                        if (input.name.endsWith('GoodsName')){
+                            input.value = 'test';
+                            input.style.display = 'none'
+                        }
+                        // Update the input name to use the correct form index
+                        input.name = input.name.replace(/-(\d+)-/, function (match, p1) {
+                            return '-' + (parseInt(p1) + 1) + '-';
+                        });
+                    } else {
+                        newRow.cells[i].innerHTML = ''; // Remove unnecessary cells
+                    }
                 }
             }
 
+            // Increment the total forms count
+            var totalFormsInput = document.getElementById('id_goods-TOTAL_FORMS');
+            totalFormsInput.value = parseInt(totalFormsInput.value) + 1;
+
             table.appendChild(newRow);
         }
-
-
 
         window.onload = function () {
             loadEditTableCellsScript();
@@ -52,6 +58,8 @@
             }
         };
     </script>
+
+
 </head>
 
 <body>
@@ -59,7 +67,7 @@
     <form method="post" action="">
         {% csrf_token %}
         {{ formset.management_form }}
-        <input type="hidden" id="goods-TOTAL_FORMS" name="goods-TOTAL_FORMS" value="{{ formset.total_form_count }}">
+        <!--<input type="hidden" id="goods-TOTAL_FORMS" name="goods-TOTAL_FORMS" value="{{ formset.total_form_count }}">-->
 
 
         <table id="form-table">
@@ -68,7 +76,7 @@
                     <th>Goods Name</th>
                     <th>First Quality Price</th>
                     <th>Second Quality Price</th>
-                    <th>Ripped Quality Price</th>
+                    
                 </tr>
             </thead>
             <tbody>
@@ -77,7 +85,7 @@
                     <td>{{ form.GoodsName }}</td>
                     <td>{{ form.FirstQualityPrice }}</td>
                     <td>{{ form.SecondQualityPrice }}</td>
-                    <td>{{ form.RippedQualityPrice }}</td>
+                    
                 </tr>
                 {% endfor %}
             </tbody>

@@ -34,21 +34,29 @@ class Buyers(models.Model):
     class Meta:
         ordering = ['BuyerName'] #oder/sort by
     
+# models.py
+
+from django.db import models
+
 class ImportedGoods(models.Model):
     SupplierID = models.ForeignKey(Suppliers, on_delete=models.DO_NOTHING)
     ImportDate = models.DateField(auto_now_add=True, null=True)
-    GoodsID = models.ForeignKey(goods, on_delete=models.DO_NOTHING)
-    creatsCount = models.IntegerField(default=0, blank=True, null=True)
-    inKGs = models.IntegerField(default=0, blank=True, null=True)
-    GoodsPrice = models.IntegerField(default=0, blank=True, null=True)   #stores initially from goods table price value and later can be modified
+    GoodsNameAndQuality = models.CharField(max_length=50, null=True)
+    GoodsQuantity = models.IntegerField(default=0, blank=True, null=True)
+    MeasurementUnits = models.CharField(default='Creats',max_length=50)
+    GoodsPrice = models.IntegerField(default=0, blank=True, null=True)
     TotalAmount = models.IntegerField(default=0, blank=True, null=True)
     MandiExpenses = models.IntegerField(default=0, blank=True, null=True)
     TobePaidToSupplier = models.IntegerField(default=0, blank=True, null=True)
     BalanceToBePaid = models.IntegerField(default=0, blank=True, null=True)
-    SoldStatus = models.BooleanField()
-    BillingStatus = models.BooleanField()
+    SoldStatus = models.BooleanField(default=False)
+    BillingStatus = models.BooleanField(default=False)
     DatePaid = models.DateField(auto_now_add=False, null=True)
     Comment = models.TextField(default='', blank=True, null=True, help_text='Enter your comment here...')
+
+    def save(self, *args, **kwargs):
+        # Your custom logic before saving (if needed)
+        super().save(*args, **kwargs)
     
 class ExportedGoods(models.Model):
     ImportedGoodID = models.ForeignKey(ImportedGoods, on_delete=models.DO_NOTHING)
