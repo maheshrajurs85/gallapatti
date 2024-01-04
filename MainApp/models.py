@@ -4,14 +4,6 @@ from django.db import models
 from django_admin_row_actions import AdminRowActionsMixin
 
 # Create your models here.https://docs.djangoproject.com/en/5.0/ref/models/fields/#default"
-class goods1(models.Model):
-    GoodsName = models.CharField(max_length=50)
-    FirstQualityPrice = models.IntegerField(default=0, blank=True, null=True)
-    SecondQualityPrice = models.IntegerField(default=0, blank=True, null=True)
-    RippedQualityPrice = models.IntegerField(default=0, blank=True, null=True)
-    class Meta:
-        ordering = ['GoodsName'] #oder/sort by 
-
 class goods(models.Model):
     GoodsName = models.CharField(max_length=50)
     FirstQualityPrice = models.IntegerField(default=0, blank=True, null=True)
@@ -36,23 +28,35 @@ class Buyers(models.Model):
     
 # models.py
 
-from django.db import models
-
+class MandiBillSummary(models.Model):
+    BillNumber = models.CharField(default='0',max_length=50)
+    TotalAmount = models.IntegerField(default=0, blank=True, null=True)
+    Hire = models.IntegerField(default=0, blank=True, null=True)
+    Cooly = models.IntegerField(default=0, blank=True, null=True)
+    AssociationFund = models.IntegerField(default=50, blank=True, null=True)
+    Charity = models.IntegerField(default=100, blank=True, null=True)
+    CashInPercentage = models.IntegerField(default=0, blank=True, null=True)
+    MandiTotalExpenses = models.IntegerField(default=0, blank=True, null=True)
+    NetTobePaidToSupplier = models.IntegerField(default=0, blank=True, null=True)
+    BalanceToBePaid = models.IntegerField(default=0, blank=True, null=True)
+    SoldStatus = models.BooleanField(default=False)
+    BillingStatus = models.BooleanField(default=False)
+    DatePaid = models.DateField(auto_now_add=False, null=True)
+    Comments = models.TextField(default='', blank=True, null=True, help_text='Enter your comment here...')
+    
 class ImportedGoods(models.Model):
+    #BillNumber = models.ForeignKey(MandiBillSummary, on_delete=models.DO_NOTHING)
+    BillNumber = models.CharField(default='0',max_length=50)
     SupplierID = models.ForeignKey(Suppliers, on_delete=models.DO_NOTHING)
     ImportDate = models.DateField(auto_now_add=True, null=True)
     GoodsNameAndQuality = models.CharField(max_length=50, null=True)
     GoodsQuantity = models.IntegerField(default=0, blank=True, null=True)
     MeasurementUnits = models.CharField(default='Creats',max_length=50)
+    InKgs = models.IntegerField(default=0, blank=True, null=True)
+    NetInKgs = models.IntegerField(default=0, blank=True, null=True)
     GoodsPrice = models.IntegerField(default=0, blank=True, null=True)
-    TotalAmount = models.IntegerField(default=0, blank=True, null=True)
-    MandiExpenses = models.IntegerField(default=0, blank=True, null=True)
-    TobePaidToSupplier = models.IntegerField(default=0, blank=True, null=True)
-    BalanceToBePaid = models.IntegerField(default=0, blank=True, null=True)
-    SoldStatus = models.BooleanField(default=False)
-    BillingStatus = models.BooleanField(default=False)
-    DatePaid = models.DateField(auto_now_add=False, null=True)
-    Comment = models.TextField(default='', blank=True, null=True, help_text='Enter your comment here...')
+    Amount = models.IntegerField(default=0, blank=True, null=True)
+    Comments = models.TextField(default='', blank=True, null=True, help_text='Enter your comment here...')
 
     def save(self, *args, **kwargs):
         # Your custom logic before saving (if needed)

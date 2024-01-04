@@ -24,8 +24,6 @@ urlpatterns = [
     path('goods/', views.GoodsView, name='GoodsView'),
     path('goods_add_row/', views.goods_add_row, name='goods_add_row'),
     
-    path('update_cell/', views.update_cell, name='goods_update_cell'),
-    
     path('suppliers/', views.SuppliersView, name='SuppliersView'),
     path('suppliers_add_row/', views.Suppliers_add_row, name='suppliers_add_row'),
     
@@ -35,11 +33,13 @@ urlpatterns = [
     path('mandiExpenses/', views.MandiExpensesView, name='MandiExpenses'),
     path('expenses_add_row/', views.MandiExpenses_add_row, name='MandiExpenses_add_row'),
     
-    path('importedgoods/', views.ImportedGoodsView, name='ImportedGoodsView'),
-    path('importedgoods_add_row/', views.ImportedGoods_add_row, name='ImportedGoods_add_row'),
+    path('update_cell/', views.update_cell, name='goods_update_cell'),
+    
     path('importgoods/', views.importgoods, name='importgoods'),  # formset test 
     path('get_supplier_suggestions/', views.get_supplier_suggestions, name='get_supplier_suggestions'),
     path('get_goods_suggesions/', views.get_goods_suggesions, name='get_goods_suggesions'),
 
-    path('goods-formset/', views.goods_formset_view, name='goods_formset_view'),
+    path('importedgoods/', views.ImportedGoodsView, name='ImportedGoodsView'),
+    path('importedgoods_add_row/', views.ImportedGoods_add_row, name='ImportedGoods_add_row'),
+  
 ]

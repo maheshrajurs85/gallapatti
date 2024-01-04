@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>InStock</title>
+    <title>Import</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link href="{% static 'css/nofileextnc.css' %}" rel='stylesheet' type='text/css'>
@@ -10,6 +10,17 @@
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="{% static 'js/editTableCells.js' %}"></script>
+    <style>
+        /* Add your custom styles here */
+        #form-table tbody tr:nth-child(even) {
+            background-color: #f2f2f2; /* Use your desired background color for even rows */
+        }
+        /* Additional styling for consistency */
+        #form-table td {
+            padding: 8px; /* Adjust padding as needed */
+            text-align: center; /* Adjust text alignment as needed */
+        }
+    </style>
     <script>
         function loadEditTableCellsScript() {
             var script = document.createElement('script');
@@ -48,7 +59,7 @@
             updateFormPrefix(newRow, formsetPrefix);
 
             // Update the total forms input
-            totalFormsInput.value = newTotalForms+1;
+            totalFormsInput.value = newTotalForms + 1;
             console.log('totalFormsInput.value 123', totalFormsInput.value);
             var addMoreButton = newRow.cells[5].querySelector('button');
             if (addMoreButton) {
@@ -181,10 +192,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {% for form in formset %}
-                                    
-                                    i = {{forloop.counter0}}
-                                    
+                                    {% for form in formset %} 
                                     <tr>
                                         <!--style="background-color: #fff"-->
                                         <td><input type="datetime-local" name="{{ formset.prefix }}-{{ forloop.counter0 }}-ImportDate" value="{% now 'Y-m-d H:i' %}" tabindex="-1"></td>
@@ -311,14 +319,14 @@
     </script>
 
     <script src="{% static 'js/editTableCells.js' %}"></script>
-    <ol>
+    <!--<ol>
         <li>fix 1st row alignment and spacing and input box size compared with 2nd row</li>
         <li>every thing should look structured</li>
         <li>1st section h and t space waste</li>
         <li>table stipd is not working </li>
         <li>between header and 1st row no line is there</li>
         <li>unit column size / can also be made it as selection list </li>
-    </ol>
+    </ol>-->
 
 </body>
 </html>

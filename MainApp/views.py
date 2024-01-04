@@ -1,13 +1,15 @@
+import datetime
 import http
+from sqlite3 import Date
 from django.apps import apps
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from MainApp.models import Buyers, ImportedGoods, MandiExpenses, Suppliers, goods
+from MainApp.models import Buyers, ImportedGoods, MandiExpenses, Suppliers, goods, MandiBillSummary
 from django.db.models import Q
 from django.forms import formset_factory
-from .forms import GoodsFormSet, ImportGoodsFormSet
+from .forms import ImportGoodsFormSet
 
 
 # Create your views here.
@@ -268,6 +270,8 @@ def ImportedGoods_add_row(request):
 
 
 from .forms import ImportGoodsFormSet
+from datetime import datetime
+import re
 
 def importgoods(request):
     if request.method == 'POST':
@@ -297,7 +301,7 @@ def importgoods(request):
 
         mutable_post = request.POST.copy();
 
-                # Add a new entry
+        # fix supplier error issue
         if ((int(request.POST['importGoods-TOTAL_FORMS'])) > 1):
             for i in range(1, int(request.POST['importGoods-TOTAL_FORMS'])):
                 new_key = f'importGoods-{i}-SupplierID';
@@ -307,32 +311,75 @@ def importgoods(request):
         formset = ImportGoodsFormSet(mutable_post, prefix='importGoods')
         if formset.is_valid():
             print('valid : mutable_post', mutable_post);
-            for form in formset:
-                # print('formmmm', form)
-                print('supplier name :',form.cleaned_data.get('SupplierID', 0));
-                print('supplier details : ',form.cleaned_data.get('SupplierDetails', 0));
-                print('Goods Name And Quality :',form.cleaned_data.get('GoodsNameAndQuality', 0));
-                print('hiddenGoodsCellName',form.cleaned_data.get('hiddenGoodsCellName', 0));
-                print('GoodsQuantity', form.cleaned_data.get('GoodsQuantity', 0));
-                print('MeasurementUnits', form.cleaned_data.get('MeasurementUnits', 0));
-                print('date printed:',form.cleaned_data.get('ImportDate', 0));
+            for i, form in enumerate(formset):
                 instance = form.save(commit=False)
-
-                # Assign the sum to 'RippedQualityPrice'
-                instance.GoodsPrice = 0
-                instance.TotalAmount = 0
-                instance.MandiExpenses = 0
-                instance.TobePaidToSupplier = 0
-                instance.BalanceToBePaid = 0
-                instance.Comment = 'no Comments'
+                instance.BillNumber = datetime.now().strftime('%Y%m%d') +'-' + request.POST[f'importGoods-{0}-SupplierID'];
+                print('instance.BillNumber = ', instance.BillNumber)
                 
                 
+                print('supplier ID :',form.cleaned_data.get('SupplierID', 0));
+                print('Goods Name And Quality :',form.cleaned_data.get('GoodsNameAndQuality', 0));
+                GoodsQuantity = form.cleaned_data.get('GoodsQuantity', 0);
+                MeasurementUnits=form.cleaned_data.get('MeasurementUnits', 0);
+                print(i);
+                NumOfCreats=0
+                if MeasurementUnits == 'Tones':
+                    NumOfCreats = (GoodsQuantity*1000)/25
+                    instance.InKgs = GoodsQuantity*1000
+                    instance.NetInKgs = GoodsQuantity*(1000-160) #1000kgs = 40Creats of 24to25kgs and 4kg wastage = 1000/25*4
+                if MeasurementUnits == 'Creats':
+                    NumOfCreats = GoodsQuantity
+                    instance.InKgs = GoodsQuantity*25
+                    instance.NetInKgs = GoodsQuantity*(25-4) # -4 is wastage per creat
+                if MeasurementUnits == 'Kgs':
+                    NumOfCreats = (GoodsQuantity/25)
+                    instance.InKgs = GoodsQuantity
+                    instance.NetInKgs = GoodsQuantity-((GoodsQuantity/25)*4) # convert into number of creats and remove 
+                 
+                # Fetch Goods value from Goods model and apply to the imported good
+                csv_values=request.POST['importGoods-0-hiddenGoodsCellName'].split(',');
+                GoodsID = csv_values[0] if csv_values else None
+                GoodsQuality = csv_values[1] if csv_values else None
+                goods_instance = goods.objects.get(pk=GoodsID); #fetch goods row
+                GoodsPrice = getattr(goods_instance, GoodsQuality); #fetch goods price based on quality
+                print('GoodsPriceeeee :', GoodsPrice);
+                
+                instance.GoodsPrice = GoodsPrice
+                # optimize below three if statements with only one or add condition to check where it is sold in terms of creats not in terms as kgs - - think
+                if MeasurementUnits == 'Tones':
+                    instance.Amount = instance.NetInKgs*GoodsPrice
+                if MeasurementUnits == 'Creats': 
+                    instance.Amount = instance.NetInKgs*GoodsPrice
+                if MeasurementUnits == 'Kgs':
+                    instance.Amount = instance.NetInKgs*GoodsPrice
 
-                # Save the instance
-                instance.save()
-                print('out side if');
-            # Your processing logic here
-            print('formmmm end');
+                MandiExpenses_instance = MandiExpenses.objects.get(pk=1);
+                coolyValue = getattr(MandiExpenses_instance, 'Coolie');
+                # update bill summary table
+                billNum = instance.BillNumber
+                try:
+                    MandiBillsumInstance = MandiBillSummary.objects.get(BillNumber=billNum)
+                    MandiBillsumInstance.TotalAmount = MandiBillsumInstance.TotalAmount+instance.Amount
+                    MandiBillsumInstance.Cooly = MandiBillsumInstance.Cooly+(NumOfCreats*coolyValue)
+                    MandiBillsumInstance.CashInPercentage = (MandiBillsumInstance.TotalAmount*10)/100
+                    MandiBillsumInstance.MandiTotalExpenses = MandiBillsumInstance.Hire + MandiBillsumInstance.Cooly + MandiBillsumInstance.AssociationFund + MandiBillsumInstance.Charity + MandiBillsumInstance.CashInPercentage  # check how to add hire
+                    MandiBillsumInstance.NetTobePaidToSupplier = MandiBillsumInstance.TotalAmount - MandiBillsumInstance.MandiTotalExpenses
+                    MandiBillsumInstance.BalanceToBePaid = MandiBillsumInstance.NetTobePaidToSupplier # check this in multi entry scenarios
+                    MandiBillsumInstance.save()
+                except MandiBillSummary.DoesNotExist:   
+                    print('not existttt')
+                    MandiBillsumInstance = MandiBillSummary(BillNumber=billNum)
+                    MandiBillsumInstance.BillNumber = instance.BillNumber 
+                    MandiBillsumInstance.TotalAmount = instance.Amount
+                    MandiBillsumInstance.Cooly = NumOfCreats*coolyValue
+                    MandiBillsumInstance.CashInPercentage = (instance.Amount*10)/100
+                    MandiBillsumInstance.MandiTotalExpenses = MandiBillsumInstance.Hire + MandiBillsumInstance.Cooly + MandiBillsumInstance.AssociationFund + MandiBillsumInstance.Charity + MandiBillsumInstance.CashInPercentage  # check how to add hire
+                    MandiBillsumInstance.NetTobePaidToSupplier = MandiBillsumInstance.TotalAmount - MandiBillsumInstance.MandiTotalExpenses
+                    MandiBillsumInstance.BalanceToBePaid = MandiBillsumInstance.NetTobePaidToSupplier # check this in multi entry scenarios
+                    MandiBillsumInstance.save()
+                
+                instance.save() # Save the instance imported goods data
+                
             return redirect('http://127.0.0.1:8000/importgoods/')  # Replace with your actual success URL
         else:
             print('errorrrr invalid', formset.errors)
@@ -341,52 +388,6 @@ def importgoods(request):
         formset = ImportGoodsFormSet(prefix='importGoods')
 
     return render(request, 'importgoods.html', {'formset': formset})
-
-
-
-
-
-################## TEStng ######################
-
-from django.shortcuts import render, redirect
-from .forms import GoodsFormSet
-
-def goods_formset_view(request):
-    print(request);
-    if request.method == 'POST':
-        
-        formset = GoodsFormSet(request.POST, prefix='goods')
-        print(formset);
-        if formset.is_valid():
-            # print('request555', request);
-            # print('validddd');
-            # print('formset555', formset);
-            for form in formset:
-                # print('Form Errors:', form.errors)
-                # print('form 1')
-                # Calculate the sum of 'FirstQualityPrice' and 'SecondQualityPrice'
-                first_quality_price = form.cleaned_data.get('FirstQualityPrice', 0)
-                second_quality_price = form.cleaned_data.get('SecondQualityPrice', 0)
-                ripped_quality_price = first_quality_price + second_quality_price
-                print('variable:', first_quality_price,second_quality_price, ripped_quality_price)
-                # Create an instance of the model
-                instance = form.save(commit=False)
-
-                # Assign the sum to 'RippedQualityPrice'
-                instance.RippedQualityPrice = ripped_quality_price
-
-                # Save the instance
-                instance.save()
-
-            return redirect('http://127.0.0.1:8000/goods-formset/')  # Replace 'success_url' with your actual success URL
-        else:
-            print('formsetttt invalid', formset)
-            print('errorrrr invalid', formset.errors)
-            print(formset.errors)
-    else:
-        formset = GoodsFormSet(prefix='goods')
-
-    return render(request, 'test_forms.html', {'formset': formset})
 
 
 
