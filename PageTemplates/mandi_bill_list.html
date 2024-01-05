@@ -1,0 +1,99 @@
+<!-- templates/mandi_bill_list.html -->
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mandi Bill List</title>
+    <link href="{% static 'css/nofileextnc.css' %}" rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="{% static 'css/font-awesome.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <style>
+        @media print {
+            #printButton {
+                display: none;
+            }
+
+            table {
+                border-collapse: collapse !important;
+                width: 100%;
+            }
+
+            table, th, td {
+                border: 1px solid black !important;
+            }
+            .no-border {
+                border: none !important;
+            }
+        }
+    </style>
+
+    <script>
+        function showImportedGoods(billNumber) {
+            $.ajax({
+                url: `/imported-goods-list/${billNumber}/`,
+                type: 'GET',
+                success: function (data) {
+                    $('#importedGoodsTable').html(data);
+                }
+            });
+        }
+    </script>
+</head>
+<body>
+
+    <div style="width: 30%;">
+        <h2 class="heading-section">Mandi Bill List</h2>
+        {% for mandi_bill in mandi_bills %}
+        <div style="margin-bottom: 5px;">
+            <button class="btn btn-info" type="button" onclick="showImportedGoods('{{ mandi_bill.BillNumber }}')">
+                View Bill: {{ mandi_bill.BillNumber }}
+            </button>
+        </div>
+        {% endfor %}
+        <script>
+            showImportedGoods('{{ mandi_bills.last.BillNumber }}');
+        </script>
+    </div>
+    <section class="ftco-section">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-6 text-center mb-5">
+
+
+                    <div style="display: flex;">
+
+                        <div id="importedGoodsTable" style="width: 70%;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <script>
+        function printDiv(divName) {
+            var printContents = document.getElementById(divName).innerHTML;
+            var originalContents = document.body.innerHTML;
+
+            document.body.innerHTML = printContents;
+            window.print();
+
+            document.body.innerHTML = originalContents;
+        }
+
+        document.addEventListener('keydown', function (event) {
+            // Check if the key combination is Ctrl + P (for printing)
+            if (event.ctrlKey && event.key === 'p') {
+                event.preventDefault(); // Prevent the default browser print behavior
+                printDiv('GallaPatti');
+            }
+        });
+
+        // Optional: Focus the print button on page load for better keyboard accessibility
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('printButton').focus();
+        });
+    </script>
+</body>
+</html>

@@ -392,3 +392,30 @@ def importgoods(request):
 
 
 
+# views.py
+from django.shortcuts import render, get_object_or_404
+from .models import MandiBillSummary, ImportedGoods
+
+def mandi_bill_list(request):
+    # Get a list of MandiBillSummary objects with SoldStatus and/or BillingStatus set to "false"
+    mandi_bills = MandiBillSummary.objects.filter(Q(SoldStatus=False) | Q(BillingStatus=False))
+
+    return render(request, 'mandi_bill_list.html', {'mandi_bills': mandi_bills})
+
+from django.shortcuts import render, get_object_or_404
+
+def imported_goods_list(request, bill_number):
+    # Get all ImportedGoods objects with the specified BillNumber
+    imported_goods = ImportedGoods.objects.filter(BillNumber=bill_number)
+    bill_summary = MandiBillSummary.objects.filter(BillNumber=bill_number)
+
+    # Assuming that there is only one SupplierID for the given bill_number
+    supplier_details = None
+    if imported_goods.exists():
+        supplier_id = imported_goods.first().SupplierID.id
+        supplier_details = get_object_or_404(Suppliers, pk=supplier_id)
+        print(supplier_details)
+
+    return render(request, 'imported_goods_list.html', {'imported_goods': imported_goods, 'bill_summary': bill_summary, 'supplier_details': supplier_details})
+
+

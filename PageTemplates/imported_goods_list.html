@@ -1,0 +1,96 @@
+<!-- templates/imported_goods_list.html -->
+<div id="GallaPatti">
+    <b>
+        <h1 class="heading-section"><b>S L N S P</b></h1>
+        <div class="top-right">
+            {% if imported_goods %}
+            Bill No: {{ imported_goods.first.BillNumber }}<br />
+            Import Date: {{ imported_goods.first.ImportDate }}<br />
+            Name: {{ supplier_details.SupplierName }}<br />
+            Address:{{ supplier_details.FromAddress }}<br />
+            Mobile:{{ supplier_details.MobileNumber }}<br />
+            {% else %}
+            <p>No data available</p>
+            {% endif %}
+        </div>
+    </b>
+
+    <table border="1" class="table table-striped">
+        <thead>
+            <tr>
+                <th>Goods and Quality</th>
+                <th>Quantity</th>
+                <th>Units</th>
+                <th>In Kgs</th>
+                <th>Net In Kgs</th>
+                <th>Price</th>
+                <th>Amount</th>
+                <!-- Add other columns as needed -->
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for imported_good in imported_goods %}
+            <tr>
+                <td>{{ imported_good.GoodsNameAndQuality }}</td>
+                <td>{{ imported_good.GoodsQuantity }}</td>
+                <td>{{ imported_good.MeasurementUnits }}</td>
+                <td>{{ imported_good.InKgs }}</td>
+                <td>{{ imported_good.NetInKgs }}</td>
+                <td>{{ imported_good.GoodsPrice }}</td>
+                <td>{{ imported_good.Amount }}</td>
+                <!-- Add other columns as needed -->
+            </tr>
+            {% endfor %}
+            <tr>
+                <td class="no-border"><b>Expenses</b></td>
+                <td class="no-border"></td>
+                <td class="no-border"></tdclass="no-border">
+                <td class="no-border"></td>
+                <td class="no-border"></td>
+                <td><b>Total Amount</b></td>
+                <td><b>{{ bill_summary.first.TotalAmount }}</b></td>
+            </tr>
+            <tr>
+                <td>Hire</td>
+                <td>{{ bill_summary.first.Hire }}</td>
+                <td class="no-border"></td>
+                <td class="no-border"></td>
+                <td class="no-border"></td>
+                <td><b>Expenses</b></td>
+                <td><b>{{ bill_summary.first.MandiTotalExpenses }}</b></td>
+            </tr>
+            <tr>
+                <td>Cooly</td>
+                <td>{{ bill_summary.first.Cooly }}</td>
+                <td class="no-border"></td>
+                <td class="no-border"></td>
+                <td class="no-border"></td>
+                <td><b>NETT</b></td>
+                <td><b>{{ bill_summary.first.NetTobePaidToSupplier }}</b></td>
+            </tr>
+            <tr>
+                <td>A/F</td>
+                <td>{{ bill_summary.first.AssociationFund }}</td>
+            </tr>
+            <tr>
+                <td>Charity</td>
+                <td>{{ bill_summary.first.Charity }}</td>
+            </tr>
+            <tr>
+                <td>Cash</td>
+                <td>{{ bill_summary.first.CashInPercentage }}</td>
+            </tr>
+            <tr>
+                <td><b>Total</b></td>
+                <td><b>{{ bill_summary.first.MandiTotalExpenses }}</b></td>
+                <td class="no-border"></td>
+                <td class="no-border"></td>
+                <td class="no-border"></td>
+                <td class="no-border"></td>
+                <td class="no-border"><button id="printButton" class="btn btn-info" onclick="printDiv('GallaPatti')">Print</button></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
