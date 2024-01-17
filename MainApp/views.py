@@ -1,5 +1,6 @@
 import datetime
 import http
+from msilib import Table
 from sqlite3 import Date
 from django.apps import apps
 from django.http import HttpResponse
@@ -14,7 +15,7 @@ from .forms import ImportGoodsFormSet
 
 # Create your views here.
 
-######################## goods funcations ###############################################################
+######################## goods functions ###############################################################
 # 
 def GoodsView(request):
     goodslist = goods.objects.all()
@@ -58,7 +59,7 @@ def update_cell(request):
         field = request.POST.get('field')
         value = request.POST.get('value')
         model_name = request.POST.get('tableName')
-        
+            
         # Update the data in the database using your Django model
         try:
             print('0')
@@ -69,7 +70,32 @@ def update_cell(request):
             #item = tableName.objects.get(id=row_id)
             setattr(item, field, value)
             item.save()
+            if model_name == 'MandiBillSummary':
+                MandiBillsumInstance = MandiBillSummary.objects.get(pk=row_id)
+                MandiBillsumInstance.MandiTotalExpenses = MandiBillsumInstance.Hire + MandiBillsumInstance.Cooly + MandiBillsumInstance.AssociationFund + MandiBillsumInstance.Charity + MandiBillsumInstance.CashInPercentage  # check how to add hire
+                MandiBillsumInstance.NetTobePaidToSupplier = MandiBillsumInstance.TotalAmount - MandiBillsumInstance.MandiTotalExpenses
+                MandiBillsumInstance.BalanceToBePaid = MandiBillsumInstance.NetTobePaidToSupplier # check this in multi entry scenarios
+                MandiBillsumInstance.save()
+                return JsonResponse({'status': 'success', 'BillNumber': MandiBillsumInstance.BillNumber})
+            if model_name == 'ImportedGoods':
+                print('3')
+                ImportedGoodsInstance = ImportedGoods.objects.get(pk=row_id)
+                MandiBillsumInstance = MandiBillSummary.objects.get(pk=row_id)
+                if field == 'InKgs':
+                    print('4')
+                    ImportedGoodsInstance.NetInKgs = ImportedGoodsInstance.InKgs-((ImportedGoodsInstance.InKgs/25)*4)
+                    OldAmount = ImportedGoodsInstance.Amount
+                    ImportedGoodsInstance.Amount = (ImportedGoodsInstance.InKgs-((ImportedGoodsInstance.InKgs/25)*4))*ImportedGoodsInstance.GoodsPrice
+                    MandiBillsumInstance.TotalAmount = MandiBillsumInstance.TotalAmount-OldAmount+ImportedGoodsInstance.Amount # check/test/verify
+                    MandiBillsumInstance.CashInPercentage = (MandiBillsumInstance.TotalAmount*10)/100
+                    MandiBillsumInstance.MandiTotalExpenses = MandiBillsumInstance.Hire + MandiBillsumInstance.Cooly + MandiBillsumInstance.AssociationFund + MandiBillsumInstance.Charity + MandiBillsumInstance.CashInPercentage  # check how to add hire
+                    MandiBillsumInstance.NetTobePaidToSupplier = MandiBillsumInstance.TotalAmount - MandiBillsumInstance.MandiTotalExpenses
+                    MandiBillsumInstance.BalanceToBePaid = MandiBillsumInstance.NetTobePaidToSupplier # check this in multi entry scenarios
+                    ImportedGoodsInstance.save()
+                    MandiBillsumInstance.save()
+                return JsonResponse({'status': 'success', 'BillNumber': MandiBillsumInstance.BillNumber})
             return JsonResponse({'status': 'success'})
+        
         except model.DoesNotExist:
             return JsonResponse({'status': 'error', 'message': 'Item not found'})
         except Exception as e:
@@ -106,7 +132,7 @@ def Suppliers_add_row(request):
    
     
 
-######################################################## Buyes funcation ################################################################
+######################################################## Buyes function ################################################################
 
 def BuyersView(request):
     buyerslist = Buyers.objects.all()
@@ -334,7 +360,7 @@ def importgoods(request):
                 if MeasurementUnits == 'Kgs':
                     NumOfCreats = (GoodsQuantity/25)
                     instance.InKgs = GoodsQuantity
-                    instance.NetInKgs = GoodsQuantity-((GoodsQuantity/25)*4) # convert into number of creats and remove 
+                    instance.NetInKgs = GoodsQuantity-((GoodsQuantity/25)*4) # convert into number of creats and remove waste
                  
                 # Fetch Goods value from Goods model and apply to the imported good
                 csv_values=request.POST['importGoods-0-hiddenGoodsCellName'].split(',');

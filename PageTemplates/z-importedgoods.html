@@ -1,0 +1,159 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>InStock</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="{% static 'css/nofileextnc.css' %}" rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="{% static 'css/font-awesome.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="{% static 'js/editTableCells.js' %}"></script>
+</head>
+
+<body>
+
+    <section class="ftco-section">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-6 text-center mb-5">
+                    <h2 class="heading-section">Instock goods details</h2>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="table-wrap">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th><b>Import Date</b></th>
+                                    <th><b>Supplier Name</b></th>
+                                    <th><b>Goods Name & Quality</b></th>
+                                    <th><b>Goods Quantity</b></th>
+                                    <th><b>Comment</b></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for imported_goods in imported_goods_list %}
+                                <tr id="row_{{ imported_goods.id }}">
+                                    <td id="cell_{{ imported_goods.id }}_SupplierID" contenteditable="true" onblur="updateCell('{{ imported_goods.id }}', 'SupplierID', this.innerText, 'ImportedGoods')">{{ imported_goods.SupplierID }}</td>
+                                    <td id="cell_{{ imported_goods.id }}_ImportDate" contenteditable="true" onblur="updateCell('{{ imported_goods.id }}', 'ImportDate', this.innerText, 'ImportedGoods')">{{ imported_goods.ImportDate }}</td>
+                                    <td id="cell_{{ imported_goods.id }}_GoodsID" contenteditable="true" onblur="updateCell('{{ imported_goods.id }}', 'GoodsID', this.innerText, 'ImportedGoods')">{{ imported_goods.GoodsID }}</td>
+                                    <td id="cell_{{ imported_goods.id }}_CreatsCount" contenteditable="true" onblur="updateCell('{{ imported_goods.id }}', 'CreatsCount', this.innerText, 'ImportedGoods')">{{ imported_goods.CreatsCount }}</td>
+                                    <td id="cell_{{ imported_goods.id }}_Comment" contenteditable="true" onblur="updateCell('{{ imported_goods.id }}', 'Comment', this.innerText, 'ImportedGoods')">{{ imported_goods.Comment }}</td>
+                                </tr>
+                                {% endfor %}
+                                <tr>
+                                    <form id="newImportedGoodsForm" method="post" action="{% url 'ImportedGoods_add_row' %}" onsubmit="return validateForm('newImportedGoodsForm')">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="row_id" value="NEW_ID">
+                                    <td><input type="datetime-local" name="ImportDate" value="{% now 'Y-m-d H:i' %}" tabindex="-1"></td>
+                                    <td style="position: relative;">
+                                        <input type="text" name="SupplierId" id="supplierInputCellId" placeholder="Supplier Name/MobNum" required list="supplierSuggestionsDLID" autofocus tabindex="1">
+                                        <input type="text" name="SupplierId" id="HiddenSupplierCellId" placeholder="Do not Type Here" required tabindex="-1">
+                                        <datalist id="supplierSuggestionsDLID" style="max-height: 150px; overflow-y: auto;"></datalist>
+                                    </td>
+                                    <td style="position: relative;">
+                                        <input type="text" name="GoodsId" id="GoodsInputCellId" placeholder="Goods Name" required list="goodsSuggestionsDLID" tabindex="2">
+                                        <input type="hidden" name="hiddenGoodsCellName" id="hiddenGoodsCellId" required>
+                                        <datalist id="goodsSuggestionsDLID" style="max-height: 150px; overflow-y: auto;"></datalist>
+                                    </td>
+                                    <td><input type="number" min="1" id="creatsCountInput" name="GoodsQunatity" placeholder="in Tones/Creats/Kgs" required tabindex="3"></td>
+                                    <td>
+                                        <label><input type="radio" name="QuantityUnit" value="Tones">Tones</label>
+                                        <label><input type="radio" name="QuantityUnit" value="Creats" checked tabindex="4">Creats</label>
+                                        <label><input type="radio" name="QuantityUnit" value="Kgs">Kgs</label>
+                                    </td>
+                                    <td><button type="submit" class="btn btn-info" tabindex="5">Save</button></td>
+                                    </form>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+    <script src="{% static 'js/popper.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/main.js' %}"></script>
+    <script src="{% static 'js/editTableCells.js' %}"></script>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+    <script>
+        // Reusable function to handle autocomplete for any input field
+        function setupAutocomplete(inputId, datalistId, hiddenFieldId, targetURL) {
+            var inputElement = $('#' + inputId);
+            var datalist = $('#' + datalistId);
+            var hiddenField = $('#' + hiddenFieldId);
+
+            inputElement.on('input', function () {
+                var userInput = inputElement.val();
+
+                $.ajax({
+                    url: targetURL,
+                    method: 'GET',
+                    data: { input_value: userInput },
+                    success: function (data) {
+                        console.log('Data received:', data);
+
+                        // Clear existing options in datalist
+                        datalist.empty();
+
+                        for (var i = 0; i < data.suggestions.length; i++) {
+                            var suggestion = data.suggestions[i];
+                            if (targetURL == '/get_supplier_suggestions/') {
+                                var option = $('<option value="' + suggestion.name + ', ' + suggestion.address + ', ' + suggestion.mobileNumber + '" data-id="' + suggestion.id + '">');
+                                datalist.append(option);
+                            }
+                            if (targetURL == '/get_goods_suggesions/') {
+                                var option = $('<option value="' + suggestion.name + ', 1st Quality' + '" data-id= "' + suggestion.id + ',FirstQualityPrice">'); //+ suggestion.address + ', ' + suggestion.mobileNumber + '" data-id="' + suggestion.id + '">');
+                                datalist.append(option);
+                                option = $('<option value="' + suggestion.name + ', 2nd Quality' + '" data-id="' + suggestion.id + ',SecondQualityPrice">');
+                                datalist.append(option);
+                                option = $('<option value="' + suggestion.name + ', Ripped Quality' + '" data-id="' + suggestion.id + ',RippedQualityPrice">');
+                                datalist.append(option);
+                            }
+                        }
+                    },
+                    error: function (error) {
+                        console.error('Ajax request failed:', error);
+                    }
+                });
+            });
+
+            // Handle selection from datalist
+            inputElement.on('input', function () {
+                var selectedOption = null;
+
+                // Find the selected option based on the current input value
+                datalist.find('option').each(function () {
+                    if ($(this).val() === inputElement.val()) {
+                        selectedOption = $(this);
+                        return false;  // Exit the loop if the option is found
+                    }
+                });
+
+                if (selectedOption) {
+                    var selectedId = selectedOption.data('id');
+                    hiddenField.val(selectedId);
+                } else {
+                    hiddenField.val('');  // Clear the hidden field if no valid option is selected
+                }
+            });
+        }
+
+
+
+        // Usage example
+        setupAutocomplete('supplierInputCellId', 'supplierSuggestionsDLID', 'HiddenSupplierCellId', '/get_supplier_suggestions/');
+        setupAutocomplete('GoodsInputCellId', 'goodsSuggestionsDLID', 'hiddenGoodsCellId', '/get_goods_suggesions/');
+    </script>
+
+    <script src="{% static 'js/editTableCells.js' %}"></script>
+
+</body>
+</html>

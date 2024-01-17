@@ -57,6 +57,8 @@ class ImportedGoods(models.Model):
     GoodsPrice = models.IntegerField(default=0, blank=True, null=True)
     Amount = models.IntegerField(default=0, blank=True, null=True)
     Comments = models.TextField(default='', blank=True, null=True, help_text='Enter your comment here...')
+    class Meta:
+        ordering = ['id'] #oder/sort by
 
     def save(self, *args, **kwargs):
         # Your custom logic before saving (if needed)

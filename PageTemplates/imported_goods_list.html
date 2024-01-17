@@ -18,13 +18,13 @@
     <table border="1" class="table table-striped">
         <thead>
             <tr>
-                <th>Goods and Quality</th>
-                <th>Quantity</th>
-                <th>Units</th>
-                <th>In Kgs</th>
-                <th>Net In Kgs</th>
-                <th>Price</th>
-                <th>Amount</th>
+                <th><b>Goods and Quality</b></th>
+                <th><b>Quantity</b></th>
+                <th><b>Units</b></th>
+                <th><b>In Kgs</b></th>
+                <th><b>Net In Kgs</b></th>
+                <th><b>Price</b></th>
+                <th><b>Amount</b></th>
                 <!-- Add other columns as needed -->
             </tr>
         </thead>
@@ -35,9 +35,9 @@
                 <td>{{ imported_good.GoodsNameAndQuality }}</td>
                 <td>{{ imported_good.GoodsQuantity }}</td>
                 <td>{{ imported_good.MeasurementUnits }}</td>
-                <td>{{ imported_good.InKgs }}</td>
+                <td id="cell_{{ imported_good.id}}_InKgs" contenteditable="true" onblur="updateCell('{{imported_good.id}}', 'InKgs', this.innerText, 'ImportedGoods')">{{ imported_good.InKgs }}</td>
                 <td>{{ imported_good.NetInKgs }}</td>
-                <td>{{ imported_good.GoodsPrice }}</td>
+                <td id="cell_{{ imported_good.id}}_GoodsPrice" contenteditable="true" onblur="updateCell('{{imported_good.id}}', 'GoodsPrice', this.innerText, 'ImportedGoods')">{{ imported_good.GoodsPrice }}</td>
                 <td>{{ imported_good.Amount }}</td>
                 <!-- Add other columns as needed -->
             </tr>
@@ -45,7 +45,7 @@
             <tr>
                 <td class="no-border"><b>Expenses</b></td>
                 <td class="no-border"></td>
-                <td class="no-border"></tdclass="no-border">
+                <td class="no-border"></td>
                 <td class="no-border"></td>
                 <td class="no-border"></td>
                 <td><b>Total Amount</b></td>
@@ -53,7 +53,7 @@
             </tr>
             <tr>
                 <td>Hire</td>
-                <td>{{ bill_summary.first.Hire }}</td>
+                <td id="cell_{{bill_summary.first.id}}_Hire" contenteditable="true" onblur="updateCell('{{ bill_summary.first.id }}', 'Hire', this.innerText, 'MandiBillSummary')">{{ bill_summary.first.Hire }}</td>
                 <td class="no-border"></td>
                 <td class="no-border"></td>
                 <td class="no-border"></td>
@@ -62,7 +62,7 @@
             </tr>
             <tr>
                 <td>Cooly</td>
-                <td>{{ bill_summary.first.Cooly }}</td>
+                <td id="cell_{{ bill_summary.first.id }}_Cooly" contenteditable="true" onblur="updateCell('{{ bill_summary.first.id }}', 'Cooly', this.innerText, 'MandiBillSummary')">{{ bill_summary.first.Cooly }}</td>
                 <td class="no-border"></td>
                 <td class="no-border"></td>
                 <td class="no-border"></td>
@@ -79,7 +79,7 @@
             </tr>
             <tr>
                 <td>Cash</td>
-                <td>{{ bill_summary.first.CashInPercentage }}</td>
+                <td  id="cell_{{ bill_summary.first.id }}_CashInPercentage" contenteditable="true" onblur="updateCell('{{ bill_summary.first.id }}', 'CashInPercentage', this.innerText, 'MandiBillSummary')">{{ bill_summary.first.CashInPercentage }}</td>
             </tr>
             <tr>
                 <td><b>Total</b></td>
