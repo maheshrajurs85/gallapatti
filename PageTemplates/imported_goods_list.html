@@ -85,10 +85,10 @@
                 <td><b>Total</b></td>
                 <td><b>{{ bill_summary.first.MandiTotalExpenses }}</b></td>
                 <td class="no-border"></td>
-                <td class="no-border"></td>
-                <td class="no-border"></td>
-                <td class="no-border"></td>
-                <td class="no-border"><button id="printButton" class="btn btn-info" onclick="printDiv('GallaPatti')">Print</button></td>
+                <td class="no-border"><b>Sold </b><input type="checkbox" value={{bill_summary.first.SoldStatus}}></td>
+                <td class="no-border"><b>Paid </b><input type="checkbox" value={{bill_summary.first.BillingStatus}}></td>
+                <td class="no-border"><button id="printButton" class="btn btn-info"><b>Save</b></button></td>
+                <td class="no-border"><button id="printButton" class="btn btn-info" onclick="printDiv('GallaPatti')"><b>Print</b></button></td>
             </tr>
         </tbody>
     </table>

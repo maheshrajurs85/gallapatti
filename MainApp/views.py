@@ -80,9 +80,11 @@ def update_cell(request):
             if model_name == 'ImportedGoods':
                 print('3')
                 ImportedGoodsInstance = ImportedGoods.objects.get(pk=row_id)
-                MandiBillsumInstance = MandiBillSummary.objects.get(pk=row_id)
+                billNumber = ImportedGoodsInstance.BillNumber
+                MandiBillsumInstance = MandiBillSummary.objects.get(BillNumber=billNumber)
+                print('4')
                 if field == 'InKgs':
-                    print('4')
+                    print('5')
                     ImportedGoodsInstance.NetInKgs = ImportedGoodsInstance.InKgs-((ImportedGoodsInstance.InKgs/25)*4)
                     OldAmount = ImportedGoodsInstance.Amount
                     ImportedGoodsInstance.Amount = (ImportedGoodsInstance.InKgs-((ImportedGoodsInstance.InKgs/25)*4))*ImportedGoodsInstance.GoodsPrice
@@ -93,7 +95,20 @@ def update_cell(request):
                     MandiBillsumInstance.BalanceToBePaid = MandiBillsumInstance.NetTobePaidToSupplier # check this in multi entry scenarios
                     ImportedGoodsInstance.save()
                     MandiBillsumInstance.save()
-                return JsonResponse({'status': 'success', 'BillNumber': MandiBillsumInstance.BillNumber})
+                    return JsonResponse({'status': 'success', 'BillNumber': MandiBillsumInstance.BillNumber})
+                if field == 'GoodsPrice':
+                    print('6')
+                    OldAmount = ImportedGoodsInstance.Amount
+                    ImportedGoodsInstance.Amount = (ImportedGoodsInstance.InKgs-((ImportedGoodsInstance.InKgs/25)*4))*ImportedGoodsInstance.GoodsPrice
+                    MandiBillsumInstance.TotalAmount = MandiBillsumInstance.TotalAmount-OldAmount+ImportedGoodsInstance.Amount # check/test/verify
+                    MandiBillsumInstance.CashInPercentage = (MandiBillsumInstance.TotalAmount*10)/100
+                    MandiBillsumInstance.MandiTotalExpenses = MandiBillsumInstance.Hire + MandiBillsumInstance.Cooly + MandiBillsumInstance.AssociationFund + MandiBillsumInstance.Charity + MandiBillsumInstance.CashInPercentage  # check how to add hire
+                    MandiBillsumInstance.NetTobePaidToSupplier = MandiBillsumInstance.TotalAmount - MandiBillsumInstance.MandiTotalExpenses
+                    MandiBillsumInstance.BalanceToBePaid = MandiBillsumInstance.NetTobePaidToSupplier # check this in multi entry scenarios
+                    ImportedGoodsInstance.save()
+                    MandiBillsumInstance.save()
+                    return JsonResponse({'status': 'success', 'BillNumber': MandiBillsumInstance.BillNumber})
+                print('7')
             return JsonResponse({'status': 'success'})
         
         except model.DoesNotExist:
