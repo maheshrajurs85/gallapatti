@@ -215,11 +215,11 @@ def MandiExpenses_add_row(request):
 
 ############################################ Imported Goods funcation ############################################################################
 
-
+"""
 def ImportedGoodsView(request):
     imported_goods_list = ImportedGoods.objects.all()
     return render(request,'importedgoods.html',{'imported_goods_list': imported_goods_list} )
-
+"""
 
 
 # funcation to provide input suggestions 
@@ -264,7 +264,7 @@ def get_goods_suggesions(request):
 
     # Return the suggestions as JSON
     return JsonResponse({'suggestions': suggestion_list})
-
+"""
 def ImportedGoods_add_row(request):
     if request.method == 'POST':
         row_id = request.POST.get('row_id')
@@ -307,7 +307,7 @@ def ImportedGoods_add_row(request):
     else:
         # Handle other HTTP methods as needed
         return redirect(ImportedGoodsView)
-
+"""
 
 
 from .forms import ImportGoodsFormSet
@@ -421,10 +421,10 @@ def importgoods(request):
                 
                 instance.save() # Save the instance imported goods data
                 
-            return redirect('http://127.0.0.1:8000/importgoods/')  # Replace with your actual success URL
+            return redirect('http://127.0.0.1:8080/importgoods/')  # Replace with your actual success URL
         else:
             print('errorrrr invalid', formset.errors)
-            return redirect('http://127.0.0.1:8000/importgoods/')
+            return redirect('http://127.0.0.1:8080/importgoods/')
     else:
         formset = ImportGoodsFormSet(prefix='importGoods')
 

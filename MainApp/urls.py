@@ -43,7 +43,7 @@ urlpatterns = [
     path('mandi-bill-list/', views.mandi_bill_list, name='mandi_bill_list'),
     path('imported-goods-list/<str:bill_number>/', views.imported_goods_list, name='imported_goods_list'),
 
-    path('importedgoods/', views.ImportedGoodsView, name='ImportedGoodsView'),
-    path('importedgoods_add_row/', views.ImportedGoods_add_row, name='ImportedGoods_add_row'),
+    #path('importedgoods/', views.ImportedGoodsView, name='ImportedGoodsView'),
+    #path('importedgoods_add_row/', views.ImportedGoods_add_row, name='ImportedGoods_add_row'),
   
 ]
