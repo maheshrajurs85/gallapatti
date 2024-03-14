@@ -32,10 +32,11 @@
                             <tbody>
                                 {% for buyer in buyerslist %}
                                 <tr id="row_{{ buyer.id }}">
-                                    <td id="cell_{{ buyer.id }}_BuyerName" contenteditable="true" onblur="updateCell('{{ buyer.id }}', 'BuyerName', this.innerText, 'Buyers')">{{buyer.BuyerName}}</td>
-                                    <td id="cell_{{ buyer.id }}_MobileNumber" contenteditable="true" onblur="updateCell('{{ buyer.id }}', 'MobileNumber', this.innerText, 'Buyers')">{{buyer.MobileNumber}}</td>
-                                    <td id="cell_{{ buyer.id }}_FromAddress" contenteditable="true" onblur="updateCell('{{ buyer.id }}', 'FromAddress', this.innerText, 'Buyers')">{{ buyer.FromAddress}}</td>
+                                    <td id="cell_{{ buyer.id }}_BuyerName" contenteditable="true" onkeydown="handleKeyDown(event, '{{ buyer.id }}', 'BuyerName', 'Buyers')" onblur="updateCell('{{ buyer.id }}', 'BuyerName', this.innerText, 'Buyers')">{{ buyer.BuyerName }}</td>
+                                    <td id="cell_{{ buyer.id }}_MobileNumber" contenteditable="true" onkeydown="handleKeyDown(event, '{{ buyer.id }}', 'MobileNumber', 'Buyers')" onblur="updateCell('{{ buyer.id }}', 'MobileNumber', this.innerText, 'Buyers')">{{ buyer.MobileNumber }}</td>
+                                    <td id="cell_{{ buyer.id }}_FromAddress" contenteditable="true" onkeydown="handleKeyDown(event, '{{ buyer.id }}', 'FromAddress', 'Buyers')" onblur="updateCell('{{ buyer.id }}', 'FromAddress', this.innerText, 'Buyers')">{{ buyer.FromAddress }}</td>
                                 </tr>
+                                
                                 {% endfor %}
 
                                 <tr>
@@ -56,12 +57,23 @@
         </div>
     </section>
 
+
+    <script>
+        function handleKeyDown(event, rowId, field, tableName) {
+            console.log('inside handlekeydown');
+            if (event.keyCode === 13) { // Check if Enter key is pressed
+                event.preventDefault(); // Prevent new line in contenteditable
+                updateCell(rowId, field, event.target.innerText, tableName);
+                event.target.blur();
+            }
+        }
+    </script>
+
     <script src="{% static 'js/jquery.min.js' %}"></script>
     <script src="{% static 'js/popper.js' %}"></script>
     <script src="{% static 'js/bootstrap.min.js' %}"></script>
     <script src="{% static 'js/main.js' %}"></script>
     <script src="{% static 'js/editTableCells.js' %}"></script>
-
 </body>
 </html>
 

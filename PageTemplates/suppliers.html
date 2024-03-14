@@ -32,10 +32,10 @@
                             <tbody>
                                 {% for supplier in supplierslist %}
                                 <tr id="row_{{ supplier.id }}">
-                                    <td id="cell_{{ supplier.id }}_SupplierName" contenteditable="true" onblur="updateCell('{{ supplier.id }}', 'SupplierName', this.innerText, 'Suppliers')">{{supplier.SupplierName}}</td>
-                                    <td id="cell_{{ supplier.id }}_MobileNumber" contenteditable="true" onblur="updateCell('{{ supplier.id }}', 'MobileNumber', this.innerText, 'Suppliers')">{{supplier.MobileNumber}}</td>
-                                    <td id="cell_{{ supplier.id }}_FromAddress" contenteditable="true" onblur="updateCell('{{ supplier.id }}', 'FromAddress', this.innerText, 'Suppliers')">{{ supplier.FromAddress}}</td>
-                                </tr>
+                                    <td id="cell_{{ supplier.id }}_SupplierName" contenteditable="true" onkeydown="handleKeyDown(event, '{{ supplier.id }}', 'SupplierName', 'Suppliers')" onblur="updateCell('{{ supplier.id }}', 'SupplierName', this.innerText, 'Suppliers')">{{ supplier.SupplierName }}</td>
+                                    <td id="cell_{{ supplier.id }}_MobileNumber" contenteditable="true" onkeydown="handleKeyDown(event, '{{ supplier.id }}', 'MobileNumber', 'Suppliers')" onblur="updateCell('{{ supplier.id }}', 'MobileNumber', this.innerText, 'Suppliers')">{{ supplier.MobileNumber }}</td>
+                                    <td id="cell_{{ supplier.id }}_FromAddress" contenteditable="true" onkeydown="handleKeyDown(event, '{{ supplier.id }}', 'FromAddress', 'Suppliers')" onblur="updateCell('{{ supplier.id }}', 'FromAddress', this.innerText, 'Suppliers')">{{ supplier.FromAddress }}</td>
+                                </tr>                                
                                 {% endfor %}
 
                                 <tr>
@@ -55,6 +55,17 @@
             </div>
         </div>
     </section>
+
+    <script>
+        function handleKeyDown(event, rowId, field, tableName) {
+            console.log('inside handlekeydown');
+            if (event.keyCode === 13) { // Check if Enter key is pressed
+                event.preventDefault(); // Prevent new line in contenteditable
+                updateCell(rowId, field, event.target.innerText, tableName);
+                event.target.blur();
+            }
+        }
+    </script>
 
     <script src="{% static 'js/jquery.min.js' %}"></script>
     <script src="{% static 'js/popper.js' %}"></script>

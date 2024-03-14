@@ -20,6 +20,15 @@ function validateForm(formId) {
 }
 
 
+function handleKeyDown(event, rowId, field, tableName) {
+    console.log('inside handlekeydown');
+    if (event.keyCode === 13) { // Check if Enter key is pressed
+        event.preventDefault(); // Prevent new line in contenteditable
+        updateCell(rowId, field, event.target.innerText, tableName);
+    }
+}
+
+
 // pending - we  have to give user an information about the update
 // if used tab - issue
 function updateCell(rowId, field, value, tableName) {
@@ -35,6 +44,7 @@ function updateCell(rowId, field, value, tableName) {
                     'csrfmiddlewaretoken': '{{ csrf_token }}'
                 },
                 success: function (data) {
+                    console.log(data);
                     console.log(field + ' Value Updated123: ' + value);
                     //window.alert('cell_' + rowId + '_' + field); //issue if used tab
                     // Below code is to hightlight the modified cell

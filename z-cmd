@@ -18,6 +18,8 @@ python manage.py collectstatic
 pip install psycopg2
 pip install django-admin-row-actions
 
+
+DB related
 es
 python manage.py makemigrations
 python manage.py sqlmigrate MainApp 0001

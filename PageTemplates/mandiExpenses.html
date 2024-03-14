@@ -36,12 +36,14 @@
                                 {% if expenseslist %}
                                 {% for expense in expenseslist %}
                                 <tr id="row_{{ expense.id }}">
-                                    <td id="cell_{{ expense.id }}_VehicleRent" contenteditable="true" onblur="updateCell('{{ expense.id }}', 'VehicleRent', this.innerText, 'MandiExpenses')">{{ expense.VehicleRent }}</td>
-                                    <td id="cell_{{ expense.id }}_AssociationFund" contenteditable="true" onblur="updateCell('{{ expense.id }}', 'AssociationFund', this.innerText, 'MandiExpenses')">{{ expense.AssociationFund }}</td>
-                                    <td id="cell_{{ expense.id }}_Coolie" contenteditable="true" onblur="updateCell('{{ expense.id }}', 'Coolie', this.innerText, 'MandiExpenses')">{{ expense.Coolie }}</td>
-                                    <td id="cell_{{ expense.id }}_Charity" contenteditable="true" onblur="updateCell('{{ expense.id }}', 'Charity', this.innerText, 'MandiExpenses')">{{ expense.Charity }}</td>
-                                    <td id="cell_{{ expense.id }}_Wastage" contenteditable="true" onblur="updateCell('{{ expense.id }}', 'WastageInKG', this.innerText, 'MandiExpenses')">{{ expense.WastageInKG }}</td>
-                                    <td id="cell_{{ expense.id }}_MandiServiceCharge" contenteditable="true" onblur="updateCell('{{ expense.id }}', 'MandiServiceChargeinPercentage', this.innerText, 'MandiExpenses')">{{ expense.MandiServiceChargeinPercentage }}</td>
+                                    <!-- <td id="cell_{{ expense.id }}_VehicleRent" contenteditable="true" onblur="updateCell('{{ expense.id }}', 'VehicleRent', this.innerText, 'MandiExpenses')">{{ expense.VehicleRent }}</td> -->
+                                    <td id="cell_{{ expense.id }}_VehicleRent" contenteditable="true" onkeydown="handleKeyDown(event, '{{ expense.id }}', 'VehicleRent', 'MandiExpenses')" onblur="updateCell('{{ expense.id }}', 'VehicleRent', this.innerText, 'MandiExpenses')">{{ expense.VehicleRent }}</td>
+
+                                    <td id="cell_{{ expense.id }}_AssociationFund" contenteditable="true" onkeydown="handleKeyDown(event, '{{ expense.id }}', 'AssociationFund', 'MandiExpenses')" onblur="updateCell('{{ expense.id }}', 'AssociationFund', this.innerText, 'MandiExpenses')">{{ expense.AssociationFund }}</td>
+                                    <td id="cell_{{ expense.id }}_Coolie" contenteditable="true" onkeydown="handleKeyDown(event, '{{ expense.id }}', 'Coolie', 'MandiExpenses')" onblur="updateCell('{{ expense.id }}', 'Coolie', this.innerText, 'MandiExpenses')">{{ expense.Coolie }}</td>
+                                    <td id="cell_{{ expense.id }}_Charity" contenteditable="true" onkeydown="handleKeyDown(event, '{{ expense.id }}', 'Charity', 'MandiExpenses')" onblur="updateCell('{{ expense.id }}', 'Charity', this.innerText, 'MandiExpenses')">{{ expense.Charity }}</td>
+                                    <td id="cell_{{ expense.id }}_WastageInKG" contenteditable="true" onkeydown="handleKeyDown(event, '{{ expense.id }}', 'WastageInKG', 'MandiExpenses')" onblur="updateCell('{{ expense.id }}', 'WastageInKG', this.innerText, 'MandiExpenses')">{{ expense.WastageInKG }}</td>
+                                    <td id="cell_{{ expense.id }}_MandiServiceChargeinPercentage" contenteditable="true" onkeydown="handleKeyDown(event, '{{ expense.id }}', 'MandiServiceChargeinPercentage', 'MandiExpenses')" onblur="updateCell('{{ expense.id }}', 'MandiServiceChargeinPercentage', this.innerText, 'MandiExpenses')">{{ expense.MandiServiceChargeinPercentage }}</td>
                                 </tr>
                                 {% endfor %}
                                 {% else %}
@@ -68,6 +70,17 @@
         </div>
     </section>
 
+
+    <script>
+        function handleKeyDown(event, rowId, field, tableName) {
+            console.log('inside handlekeydown');
+            if (event.keyCode === 13) { // Check if Enter key is pressed
+                event.preventDefault(); // Prevent new line in contenteditable
+                updateCell(rowId, field, event.target.innerText, tableName);
+                event.target.blur();
+            }
+        }
+    </script>
     <script src="{% static 'js/jquery.min.js' %}"></script>
     <script src="{% static 'js/popper.js' %}"></script>
     <script src="{% static 'js/bootstrap.min.js' %}"></script>

@@ -34,11 +34,11 @@
                             <tbody>
                                 {% for good in goodslist %}
                                 <tr id="row_{{ good.id }}">
-                                    <td id="cell_{{ good.id }}_GoodsName" contenteditable="true" onblur="updateCell('{{ good.id }}', 'GoodsName', this.innerText, 'Goods')">{{good.GoodsName}}</td>
-                                    <td id="cell_{{ good.id }}_FirstQualityPrice" contenteditable="true" onblur="updateCell('{{ good.id }}', 'FirstQualityPrice', this.innerText, 'Goods')">{{good.FirstQualityPrice}}</td>
-                                    <td id="cell_{{ good.id }}_SecondQualityPrice" contenteditable="true" onblur="updateCell('{{ good.id }}', 'SecondQualityPrice', this.innerText, 'Goods')">{{ good.SecondQualityPrice}}</td>
-                                    <td id="cell_{{ good.id }}_RippedQualityPrice" contenteditable="true" onblur="updateCell('{{ good.id }}', 'RippedQualityPrice', this.innerText, 'Goods')">{{good.RippedQualityPrice}}</td>
-                                </tr>
+                                    <td id="cell_{{ good.id }}_GoodsName" contenteditable="true" onkeydown="handleKeyDown(event, '{{ good.id }}', 'GoodsName', 'Goods')" onblur="updateCell('{{ good.id }}', 'GoodsName', this.innerText, 'Goods')">{{ good.GoodsName }}</td>
+                                    <td id="cell_{{ good.id }}_FirstQualityPrice" contenteditable="true" onkeydown="handleKeyDown(event, '{{ good.id }}', 'FirstQualityPrice', 'Goods')" onblur="updateCell('{{ good.id }}', 'FirstQualityPrice', this.innerText, 'Goods')">{{ good.FirstQualityPrice }}</td>
+                                    <td id="cell_{{ good.id }}_SecondQualityPrice" contenteditable="true" onkeydown="handleKeyDown(event, '{{ good.id }}', 'SecondQualityPrice', 'Goods')" onblur="updateCell('{{ good.id }}', 'SecondQualityPrice', this.innerText, 'Goods')">{{ good.SecondQualityPrice }}</td>
+                                    <td id="cell_{{ good.id }}_RippedQualityPrice" contenteditable="true" onkeydown="handleKeyDown(event, '{{ good.id }}', 'RippedQualityPrice', 'Goods')" onblur="updateCell('{{ good.id }}', 'RippedQualityPrice', this.innerText, 'Goods')">{{ good.RippedQualityPrice }}</td>
+                                </tr>                                
                                 {% endfor %}
 
                                 <tr>
@@ -59,6 +59,17 @@
             </div>
         </div>
     </section>
+
+    <script>
+        function handleKeyDown(event, rowId, field, tableName) {
+            console.log('inside handlekeydown');
+            if (event.keyCode === 13) { // Check if Enter key is pressed
+                event.preventDefault(); // Prevent new line in contenteditable
+                updateCell(rowId, field, event.target.innerText, tableName);
+                event.target.blur();
+            }
+        }
+    </script>
 
     <script src="{% static 'js/jquery.min.js' %}"></script>
     <script src="{% static 'js/popper.js' %}"></script>
