@@ -46,11 +46,11 @@
 <body>
 
     <div style="width: 30%;">
-        <h2 class="heading-section">Mandi Bill List</h2>
+        <h2 class="heading-section">Mandi Patti List</h2>
         {% for mandi_bill in mandi_bills %}
         <div style="margin-bottom: 5px;">
             <button class="btn btn-info" type="button" onclick="showImportedGoods('{{ mandi_bill.BillNumber }}')">
-                View Bill: {{ mandi_bill.BillNumber }}
+               <b> Patti : {{ mandi_bill.BillNumber }} </b>
             </button>
         </div>
         {% endfor %}
@@ -96,6 +96,17 @@
         //    document.getElementById('printButton').focus();
         //});
     </script>
+    <script>
+        function handleKeyDown(event, rowId, field, tableName) {
+            console.log('inside handlekeydown');
+            if (event.keyCode === 13) { // Check if Enter key is pressed
+                event.preventDefault(); // Prevent new line in contenteditable
+                updateCell(rowId, field, event.target.innerText, tableName);
+                event.target.blur();
+            }
+        }
+    </script>
     <script src="{% static 'js/editTableCells.js' %}"></script>
+
 </body>
 </html>

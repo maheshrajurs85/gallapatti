@@ -35,9 +35,9 @@
                 <td>{{ imported_good.GoodsNameAndQuality }}</td>
                 <td>{{ imported_good.GoodsQuantity }}</td>
                 <td>{{ imported_good.MeasurementUnits }}</td>
-                <td id="cell_{{ imported_good.id}}_InKgs" contenteditable="true" onblur="updateCell('{{imported_good.id}}', 'InKgs', this.innerText, 'ImportedGoods')">{{ imported_good.InKgs }}</td>
+                <td id="cell_{{ imported_good.id}}_InKgs" contenteditable="true" onkeydown="handleKeyDown(event, '{{imported_good.id}}', 'InKgs', 'ImportedGoods')" onblur="updateCell('{{imported_good.id}}', 'InKgs', this.innerText, 'ImportedGoods')">{{ imported_good.InKgs }}</td>
                 <td>{{ imported_good.NetInKgs }}</td>
-                <td id="cell_{{ imported_good.id}}_GoodsPrice" contenteditable="true" onblur="updateCell('{{imported_good.id}}', 'GoodsPrice', this.innerText, 'ImportedGoods')">{{ imported_good.GoodsPrice }}</td>
+                <td id="cell_{{ imported_good.id}}_GoodsPrice" contenteditable="true" onkeydown="handleKeyDown(event, '{{imported_good.id}}', 'GoodsPrice', 'ImportedGoods')" onblur="updateCell('{{imported_good.id}}', 'GoodsPrice', this.innerText, 'ImportedGoods')">{{ imported_good.GoodsPrice }}</td>
                 <td>{{ imported_good.Amount }}</td>
                 <!-- Add other columns as needed -->
             </tr>
@@ -53,7 +53,7 @@
             </tr>
             <tr>
                 <td>Hire</td>
-                <td id="cell_{{bill_summary.first.id}}_Hire" contenteditable="true" onblur="updateCell('{{ bill_summary.first.id }}', 'Hire', this.innerText, 'MandiBillSummary')">{{ bill_summary.first.Hire }}</td>
+                <td id="cell_{{bill_summary.first.id}}_Hire" contenteditable="true" onkeydown="handleKeyDown(event, '{{ bill_summary.first.id }}', 'Hire', 'MandiBillSummary')" onblur="updateCell('{{ bill_summary.first.id }}', 'Hire', this.innerText, 'MandiBillSummary')">{{ bill_summary.first.Hire }}</td>
                 <td class="no-border"></td>
                 <td class="no-border"></td>
                 <td class="no-border"></td>
@@ -62,7 +62,7 @@
             </tr>
             <tr>
                 <td>Cooly</td>
-                <td id="cell_{{ bill_summary.first.id }}_Cooly" contenteditable="true" onblur="updateCell('{{ bill_summary.first.id }}', 'Cooly', this.innerText, 'MandiBillSummary')">{{ bill_summary.first.Cooly }}</td>
+                <td id="cell_{{ bill_summary.first.id }}_Cooly" contenteditable="true" onkeydown="handleKeyDown(event,'{{ bill_summary.first.id }}', 'Cooly', 'MandiBillSummary')" onblur="updateCell('{{ bill_summary.first.id }}', 'Cooly', this.innerText, 'MandiBillSummary')">{{ bill_summary.first.Cooly }}</td>
                 <td class="no-border"></td>
                 <td class="no-border"></td>
                 <td class="no-border"></td>
@@ -79,7 +79,7 @@
             </tr>
             <tr>
                 <td>Cash</td>
-                <td  id="cell_{{ bill_summary.first.id }}_CashInPercentage" contenteditable="true" onblur="updateCell('{{ bill_summary.first.id }}', 'CashInPercentage', this.innerText, 'MandiBillSummary')">{{ bill_summary.first.CashInPercentage }}</td>
+                <td  id="cell_{{ bill_summary.first.id }}_CashInPercentage" contenteditable="true" onkeydown="handleKeyDown(event, '{{ bill_summary.first.id }}', 'CashInPercentage', 'MandiBillSummary')" onblur="updateCell('{{ bill_summary.first.id }}', 'CashInPercentage', this.innerText, 'MandiBillSummary')">{{ bill_summary.first.CashInPercentage }}</td>
             </tr>
             <tr>
                 <td><b>Total</b></td>
